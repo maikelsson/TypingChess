@@ -12,15 +12,26 @@ export default (state, action) => {
 				...state,
 				users: [...state.users, action.payload]
 			}
-		case 'LOGIN_ATTEMPT':
+		case 'USER_LOGIN':
 			return {
 				...state,
-				foundUser: state.users.map((u) => u.name === action.name && u.password === action.password) 
+				currentUser: action.payload,
+				
+			}
+		case 'LOGOUT': 
+			return {
+				...state,
+				isAuthenticated: action.payload
 			}
 		case 'USERS_ERROR':
 			return {
 				...state,
 				error: action.payload
+			}
+		case 'SET_AUTH':
+			return {
+				...state,
+				isAuthenticated: action.payload
 			}
 		default:
 			return state;

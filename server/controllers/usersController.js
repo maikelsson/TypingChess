@@ -22,7 +22,10 @@ exports.getUsers = async (req, res, next) => {
 // @route POST /api/v1/users
 exports.addUser = async (req, res, next) => {
 	try {
+
+		// in future brycpt the password
 		const { username, password } = req.body;
+		console.log(username);
 		const user = await User.create(req.body);
 		return res.status(201).json({
 			success: true,

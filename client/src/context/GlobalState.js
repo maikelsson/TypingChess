@@ -50,14 +50,6 @@ export const GlobalProvider = ({ children }) => {
 			  });
 		}
 
-		
-	}
-
-	function userLogin(user) {
-		dispatch({
-			type: 'LOGIN_ATTEMPT',
-			payload: user
-		})
 	}
 
 	return (
@@ -66,8 +58,7 @@ export const GlobalProvider = ({ children }) => {
 			error: state.error,
 			loading: state.loading,
 			addRegisteredUser,
-			userLogin,
-			getUsers
+			getUsers,
 		}}>
 			{children}
 		</GlobalContext.Provider>

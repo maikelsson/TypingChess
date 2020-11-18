@@ -2,25 +2,30 @@ import React, {useContext, useState, useEffect} from 'react';
 import { useHistory } from 'react-router-dom';
 import {TextField, Box, Button} from '@material-ui/core'
 import { GlobalContext } from '../context/GlobalState';
+import { AuthContext } from '../context/authentication/AuthState';
 
 export const LoginForm = () => {
 	const [name, setName] = useState('');
 	const [password, setPassword] = useState('');
 	const { users, getUsers } = useContext(GlobalContext);
+	const { setAuthState, setUserLoggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		getUsers();
-		console.log("got the users");
+		console.log("USERS LOADED: ", users);
 	}, [])
 
 	let history = useHistory();
 
 	const onSubmit = (e) => {
 		e.preventDefault();
+
+		//TODO: Handle these on server side
 		const found = users.some(u => u.username === name && u.password === password);
 		if(found) {
-			console.log(users)
-			console.log("user found!");
+			const user = users.find(u => u.username === name);
+			setUserLoggedIn(user)
+			setAuthState(true);
 			history.push("/home")
 		} else {
 			console.log("User not found")

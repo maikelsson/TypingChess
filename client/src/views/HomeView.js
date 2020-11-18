@@ -1,8 +1,9 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { AuthContext } from '../context/authentication/AuthState'
+import {io} from 'socket.io-client';
 
 export const HomeView = () => {
-	const { setAuthState, setUserLoggedIn, currentUser } = useContext(AuthContext)
+	const { setAuthState, setUserLoggedIn, currentUser } = useContext(AuthContext);
 
 	const onLogOut = (e) => {
 		e.preventDefault();

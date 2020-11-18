@@ -8,7 +8,7 @@ export const RegisterForm = () => {
 	const [password, setPassword] = useState('')
 	const [confirmPassword, setConfirmPassword] = useState('')
 
-	const { users, addRegisteredUser } = useContext(GlobalContext);
+	const { addRegisteredUser } = useContext(GlobalContext);
 
 	const onSubmit = (e) => {
 		e.preventDefault();

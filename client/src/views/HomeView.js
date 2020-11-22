@@ -1,11 +1,13 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom'; 
 import { AuthContext } from '../context/authentication/AuthState'
+
 
 
 export const HomeView = () => {
 	const { setAuthState, setUserLoggedIn, currentUser } = useContext(AuthContext);
 	useEffect(() => {
+		
 		console.log(currentUser);
 	}, [])
 

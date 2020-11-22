@@ -4,7 +4,7 @@ import socketIOClient from 'socket.io-client';
 const NEW_USER_CONNECTED_EVENT = "newUserConnection";
 
 const useMatchmaking = () => {
-	const [connections, setUsers] = useState([])
+	const [connections, setConnections] = useState([])
 	const socketRef = useRef();
 
 	useEffect(() => {
@@ -16,8 +16,7 @@ const useMatchmaking = () => {
 				...user,
 				isOwnConnection: user.senderId === socketRef.current.id ? true : false,
 			};
-			setUsers((connections) => [...connections, userConnection]);
-			console.log(user.isOwnConnection);
+			setConnections((connections) => [...connections, userConnection]);
 		})
 
 		return () => {

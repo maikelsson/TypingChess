@@ -59,8 +59,8 @@ io.on('connection', (socket) => {
 		currentRoom: ""
 	}
 
-	if(getConnectionsInterval) clearInterval(getConnectionsInterval);
-	getConnectionsInterval = setInterval(() => getConnectedUsersAndEmit(io, currentUser), 3000);
+	//if(getConnectionsInterval) clearInterval(getConnectionsInterval);
+	//getConnectionsInterval = setInterval(() => getConnectedUsersAndEmit(io, currentUser), 3000);
 
 	socket.on('ADD_NEW_CONNECTION', (username) => {
 		if(currentUser.searchingForMatch) return;
@@ -74,29 +74,40 @@ io.on('connection', (socket) => {
 		console.log(currentUser);
 	})
 
-	socket.on('TRY_JOIN_AVAILABLE_ROOM', (username) => {
-		if(!currentUser.searchingForMatch) return;
+	socket.on('GET_ROOMS', () => {
+		console.log("get rooms server")
+		io.in(currentUser.currentRoom).emit('GET_ROOMS', availableGameRooms)
+	})
+
+	socket.on("client_join_room", (roomName) => {
 		try {
-			let room = availableGameRooms.find((r) => r.gameRoomUsers.length < 2 && r.name !== 'matchmaking');
-			room.gameRoomUsers.push(currentUser.username);
-			console.log("try join", room);
-			currentUser.currentRoom = room.name;
-			currentUser.searchingForMatch = false;
-			socket.join(currentUser.currentRoom);
+
+			// removing user from oldroom
+			var filtered = availableGameRooms.map(function(r) {
+				r.gameRoomUsers = r.gameRoomUsers.filter(function(u) {return u !== currentUser.username;});
+				return r;
+			});
+
+			availableGameRooms = filtered;
+			socket.leave(currentUser.currentRoom);
+
+			let roomToJoin = availableGameRooms.find((r) => r.name === roomName);
+			roomToJoin = roomToJoin.gameRoomUsers.push(currentUser.username);
+			socket.join(roomName);
+			currentUser.currentRoom = roomName;
 		} catch (error) {
-			console.log(error);
+			console.log("error: ", error);
 		}
+	})
+
+	socket.on('GET_ROOM_DETAILS', () => {
+		io.in(currentUser.currentRoom).emit('GET_ROOM_DETAILS', ({roomName: currentUser.currentRoom, users: availableGameRooms.find((r) => r.name === currentUser.currentRoom)}));
 	})
 
 	socket.on("disconnect", () => {
 		console.log("disconnect!")
 		connectedUsers = connectedUsers.filter((u) => u.username !== currentUser.username);
-		//find the room where user is
-
-		let room = availableGameRooms.find((r) => r.name === currentUser.currentRoom);
-		room.gameRoomUsers.filter((u) => u.username !== currentUser.username);
-		console.log(room.gameRoomUsers, "room");
-		console.log("user rooms", currentUser.currentRoom);
+		console.log(connectedUsers);
 		socket.leave();
 	});
 })

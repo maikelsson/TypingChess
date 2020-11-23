@@ -13,7 +13,7 @@ export function SocketProvider({children}) {
 	useEffect(() => {
 		const newSocket = io();
 		setSocket(newSocket);
-
+		console.log(newSocket);
 		return () => newSocket.close();
 	}, [])
 

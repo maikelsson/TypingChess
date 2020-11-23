@@ -13,11 +13,13 @@ import { AuthProvider } from './context/authentication/AuthState';
 
 
 import './App.css';
+import { SocketProvider } from './context/socket/SocketProvider';
 
 function App() {
   	return (
 		<GlobalProvider>
 			<AuthProvider>
+				<SocketProvider>
 					<Router>
 						<Switch>
 								<Route path="/login">
@@ -34,6 +36,7 @@ function App() {
 								</Route>		
 						</Switch>
 					</Router>
+				</SocketProvider>	
 			</AuthProvider>
 		</GlobalProvider>
   );

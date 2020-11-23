@@ -1,38 +1,37 @@
 import React, {useContext, useEffect, useState} from 'react';
 import { AuthContext } from '../context/authentication/AuthState'
 import { GamePanel } from '../components/GamePanel';
+import { useSocket } from '../context/socket/SocketProvider';
 
 export const GameView = () => {
 
 	const { currentUser } = useContext(AuthContext);
-	//const { connections, sendNewConnection } = useMatchmaking();
 
-	const [connections, setConnections] = useState([]);
 	const [opponentName, setOpponentName] = useState('')
 	const [roomName, setRoomName] = useState('');
-	
- 
-	//useEffect(() => {
-	//	//sendNewConnection(currentUser.username, false);
-	//	//console.log(connections);
-	//	socket.emit('ADD_NEW_CONNECTION', currentUser.username);
-	//	socket.on('GET_CONNECTIONS', (data) => {
-	//		console.log("getdata", data);
-	//		setConnections(data.gameRoomUsers);
-	//		setRoomName(data.name);
-	//		setOpponentName(data.opponent)
-	//	});
-//
-	//	socket.emit('TRY_JOIN_AVAILABLE_ROOM', currentUser.username);
-//
-	//	// closes socket connection when this component unmounts
-	//	return () => socket.disconnect(); 
-	//}, []);
+	const socket = useSocket();
+
+	useEffect(() => {
+		if(socket === null) return;
+
+		socket.emit('GET_ROOM_DETAILS');
+		socket.on('GET_ROOM_DETAILS', ({roomName, users}) => {
+			if(users.gameRoomUsers.length === 2){
+				let opponent = users.gameRoomUsers.find((u) => u !== currentUser.username);
+				setOpponentName(opponent);
+			}
+			console.log("getting", users)
+			setRoomName(roomName);
+
+		})
+
+		// unsubscribe from events
+		return () => socket.off('GET_ROOM_DETAILS'); 
+	}, [socket, currentUser]);
 
 	return (
 		<div>
-			<h1>GameView {roomName}</h1>
-			<h4>Players currently looking for a match: {connections.length}</h4>
+			<h1>ROOM: {roomName}</h1>
 			<div>
 			</div>
 			<GamePanel myName={currentUser.username} opponent={opponentName}/>

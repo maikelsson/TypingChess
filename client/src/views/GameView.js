@@ -10,21 +10,24 @@ export const GameView = () => {
 	const { currentUser } = useContext(AuthContext);
 	//const { connections, sendNewConnection } = useMatchmaking();
 
-	const [connections, setConnections] = useState([])
+	const [connections, setConnections] = useState([]);
+	const [opponentName, setOpponentName] = useState('')
+	const [roomName, setRoomName] = useState('');
+	
  
 	useEffect(() => {
 		//sendNewConnection(currentUser.username, false);
 		//console.log(connections);
 		const socket = socketIOClient();
 		socket.emit('ADD_NEW_CONNECTION', currentUser.username);
-		socket.on('GET_CONNECTIONS', conns => {
-			console.log("getconns", conns);
-			let newArr = conns;
-			console.log(newArr, "newArr");
-			setConnections({connections: conns});
-			console.log(connections, "connections");
+		socket.on('GET_CONNECTIONS', (data) => {
+			console.log("getdata", data);
+			setConnections(data.gameRoomUsers);
+			setRoomName(data.name);
+			setOpponentName(data.opponent)
 		});
 
+		socket.emit('TRY_JOIN_AVAILABLE_ROOM', currentUser.username);
 
 		// closes socket connection when this component unmounts
 		return () => socket.disconnect(); 
@@ -32,11 +35,11 @@ export const GameView = () => {
 
 	return (
 		<div>
-			<h1>GameView</h1>
+			<h1>GameView {roomName}</h1>
 			<h4>Players currently looking for a match: {connections.length}</h4>
 			<div>
 			</div>
-			<GamePanel />
+			<GamePanel myName={currentUser.username} opponent={opponentName}/>
 
 		</div>
 		

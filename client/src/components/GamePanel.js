@@ -8,7 +8,7 @@ export const GamePanel = (props) => {
 	return (
 		<div className="flex-container">
 			<Chessboard />
-			<GameInfoPanel />
+			<GameInfoPanel my={props.myName} opp={props.opponentName}/>
 		</div>
 	)
 }

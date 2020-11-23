@@ -13,7 +13,7 @@ export const GameInfoPanel = (props) => {
 				height: '25%',
 				textAlign: 'center'
 			}}>
-				MyPlayer
+				{props.my}
 			</div>
 			<div style={{
 				backgroundColor: 'yellow',
@@ -25,7 +25,7 @@ export const GameInfoPanel = (props) => {
 				backgroundColor: 'aqua',
 				height: '25%'
 			}}>
-				opponent
+				{props.opp}
 			</div>
 		</div>
 	)

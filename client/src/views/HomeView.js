@@ -25,7 +25,7 @@ export const HomeView = () => {
 			<p>Currently logged in as a: {currentUser.username}</p>
 			<Link to="/game">
 				<button>
-					game
+					find game
 				</button>
 			</Link>
 		</div>

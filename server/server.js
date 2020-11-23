@@ -48,7 +48,6 @@ let availableGameRooms = [
 
 let getConnectionsInterval;
 
-
 http.listen(PORT, () => 
 	console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`.yellow.bold))
 

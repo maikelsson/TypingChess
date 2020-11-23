@@ -18,23 +18,23 @@ function App() {
   	return (
 		<GlobalProvider>
 			<AuthProvider>
-				<Router>
-					<Switch>
-							<Route path="/login">
-								<LoginView />
-							</Route>
-							<Route path="/register">
-								<RegisterView />
-							</Route>
-							<PrivateRoute path='/game' component={GameView} />
-							<PrivateRoute path='/home' component={HomeView}/>
-							<Route path="/">
-								<LoginView />
-							</Route>		
-					</Switch>
-				</Router>
+					<Router>
+						<Switch>
+								<Route path="/login">
+									<LoginView />
+								</Route>
+								<Route path="/register">
+									<RegisterView />
+								</Route>
+									<PrivateRoute path='/game' component={GameView} />
+									<PrivateRoute path='/home' component={HomeView}/>
+								
+								<Route path="/">
+									<LoginView />
+								</Route>		
+						</Switch>
+					</Router>
 			</AuthProvider>
-			
 		</GlobalProvider>
   );
 }

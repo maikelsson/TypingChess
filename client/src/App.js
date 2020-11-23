@@ -1,4 +1,4 @@
-import React, {useContext} from 'react'
+import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
@@ -13,28 +13,31 @@ import { AuthProvider } from './context/authentication/AuthState';
 
 
 import './App.css';
+import { SocketProvider } from './context/socket/SocketProvider';
 
 function App() {
   	return (
 		<GlobalProvider>
 			<AuthProvider>
-				<Router>
-					<Switch>
-							<Route path="/login">
-								<LoginView />
-							</Route>
-							<Route path="/register">
-								<RegisterView />
-							</Route>
-							<PrivateRoute path='/game' component={GameView} />
-							<PrivateRoute path='/home' component={HomeView}/>
-							<Route path="/">
-								<LoginView />
-							</Route>		
-					</Switch>
-				</Router>
+				<SocketProvider>
+					<Router>
+						<Switch>
+								<Route path="/login">
+									<LoginView />
+								</Route>
+								<Route path="/register">
+									<RegisterView />
+								</Route>
+									<PrivateRoute path='/game' component={GameView} />
+									<PrivateRoute path='/home' component={HomeView}/>
+								
+								<Route path="/">
+									<LoginView />
+								</Route>		
+						</Switch>
+					</Router>
+				</SocketProvider>	
 			</AuthProvider>
-			
 		</GlobalProvider>
   );
 }

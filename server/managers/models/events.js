@@ -1,0 +1,8 @@
+const EVENT_TYPES = [
+	"ADD_CONNECTION",
+	"REMOVE_CONNECTION"
+]
+
+module.exports = {
+	EVENT_TYPES: EVENT_TYPES
+}

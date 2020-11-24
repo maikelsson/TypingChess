@@ -22,18 +22,20 @@ function App() {
 				<SocketProvider>
 					<Router>
 						<Switch>
-								<Route path="/login">
-									<LoginView />
-								</Route>
-								<Route path="/register">
-									<RegisterView />
-								</Route>
-									<PrivateRoute path='/game' component={GameView} />
-									<PrivateRoute path='/home' component={HomeView}/>
-								
-								<Route path="/">
-									<LoginView />
-								</Route>		
+							
+							<Route path="/login">
+								<LoginView />
+							</Route>
+							<Route path="/register">
+								<RegisterView />
+							</Route>
+								<PrivateRoute path='/game' component={GameView} />
+								<PrivateRoute path='/home' component={HomeView}/>
+							
+							<Route path="/">
+								<LoginView />
+							</Route>
+
 						</Switch>
 					</Router>
 				</SocketProvider>	

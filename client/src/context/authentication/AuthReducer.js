@@ -1,15 +1,23 @@
 // eslint-disable-next-line import/no-anonymous-default-export
 export default (state, action) => {
 	switch(action.type) {
-		case 'SET_AUTH_STATE':
+		case 'LOGIN':
 			return {
 				...state,
-				isAuthenticated: action.payload
+				authenticatedUser: action.payload,
+				isAuthenticated: true,
 			}
-		case 'SET_LOGGED_USER':
+		case 'LOGIN_ERROR':
 			return {
 				...state,
-				currentUser: action.payload
+				authenticatedUser: action.payload,
+				isAuthenticated: false
+			}
+		case 'LOGOUT':
+			return {
+				...state,
+				authenticatedUser: action.payload,
+				isAuthenticated: false
 			}
 		default:
 			return state;

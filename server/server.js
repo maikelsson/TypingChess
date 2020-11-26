@@ -36,7 +36,11 @@ class GameServer {
 	registerServerEvents() {
 		this.io.on('connection', (socket) => {
 			this.eventManager.onConnection(socket);
-			
+
+			socket.on('message', (data) => {
+				this.eventManager.onMessage(socket, data);
+			})
+
 			socket.on('disconnect', () => {
 				this.eventManager.onDisconnect(socket);
 			})

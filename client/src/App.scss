@@ -1,0 +1,31 @@
+// Override default variables before the import
+$body-bg: #9f8fa7;
+$body-color: set-color($body-bg);
+$primary: purple;
+
+.body {
+	color: set-color($body-bg);
+}
+
+@function set-color($color) {
+	@if (lightness($color) > 40) {
+		@return white;
+	} @else {
+		@return black;
+	}
+}
+
+// Import Bootstrap and its default variables
+@import "~bootstrap/scss/bootstrap.scss";
+
+.card {
+	background-color: #f4eef6;
+}
+
+.form-control {
+	&:hover {
+		background-color: rgb(248, 220, 255);
+		border: 0px;
+	}
+	
+}

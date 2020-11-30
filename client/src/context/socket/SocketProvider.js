@@ -1,10 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { AuthContext } from '../authentication/AuthState';
-
-const EVENT_TYPES = {
-	ADD_CONNECTION: "ADD_CONNECTION"
-}
+import { useHistory } from 'react-router-dom';
+import * as EVENTS from '../../constants/events';
 
 const SocketContext = createContext();
 
@@ -14,6 +12,7 @@ export function useSocket() {
 
 export function SocketProvider({children}) {
 	const [socket, setSocket] = useState();
+	const history = useHistory();
 
 	const { authenticatedUser } = useContext(AuthContext);
 
@@ -23,17 +22,24 @@ export function SocketProvider({children}) {
 
 		newSocket.on('connect', () => {
 			console.log("socket connected!");
-			newSocket.emit('message', ({event: EVENT_TYPES.ADD_CONNECTION, data: authenticatedUser}));
+			newSocket.emit('message', ({event: EVENTS.CONNECTION_EVENT_TYPES.ADD_CONNECTION, data: authenticatedUser}));
 		});
+
+		newSocket.on('response', (data) => {
+			console.log("socket got response!");
+		})
 
 		newSocket.on('disconnect', (reason) => {
 			if(reason === 'io server disconnect') {
 				newSocket.connect();
 			}
+			newSocket.emit('message', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
+			newSocket.close();
+			history.push('/login');
 		})
 
 		return () => newSocket.close();
-	}, [authenticatedUser])
+	}, [authenticatedUser, history])
 
 	return (
 		<SocketContext.Provider value={socket}>

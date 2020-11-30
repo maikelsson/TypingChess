@@ -4,7 +4,7 @@ const http = require('http');
 const morgan = require('morgan');
 const socketIo = require('socket.io');
 
-const eventManager = require('./managers/event');
+const EventManager = require('./managers/event');
 
 dotenv.config({ path: './config/config.env'});
 const usersRoute = require('./routes/users');
@@ -16,7 +16,7 @@ class GameServer {
 		this.server = http.createServer(this.app);
 		this.io = socketIo(this.server);
 		
-		this.eventManager = new eventManager.default();
+		this.eventManager = new EventManager();
 
 		this.port = process.env.PORT || 5000;
 
@@ -26,6 +26,7 @@ class GameServer {
 	}
 
 	registerServerRoutes() {
+		console.log("this server routes!");
 		if(process.env.NODE_ENV === 'development') {
 			this.app.use(morgan('dev'));
 		}
@@ -39,6 +40,14 @@ class GameServer {
 
 			socket.on('message', (data) => {
 				this.eventManager.onMessage(socket, data);
+			})
+
+			socket.on('request', (data) => {
+				this.eventManager.onRequest(socket, data, this.io);
+			})
+
+			socket.on('game', (data) => {
+				this.eventManager.onGame(socket, data, this.io);
 			})
 
 			socket.on('disconnect', () => {

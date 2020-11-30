@@ -3,7 +3,7 @@ const colors = require("colors");
 const messageLogger = (from, message, variant) => {
 	let m = getBase(from);
 
-	switch(variant){
+	switch(variant.toUpperCase()){
 		case "SUCCESS":
 			console.log(m + message.green)
 			break; 
@@ -12,7 +12,9 @@ const messageLogger = (from, message, variant) => {
 			break;
 		case "WARNING":
 			console.log(m + message.yellow)
-			break;  
+			break;
+		case "INFO":
+			console.log(m + message.yellow)  
 		default:
 			return "";
 	}
@@ -27,8 +29,12 @@ function getBase(from) {
 		case "CLIENT":
 			return `[${from.toUpperCase()}] `.blue;
 		default:
-			return `[${from.toUpperCase()}] `.white;
+			return `[${from.toUpperCase()}] `.cyan;
 	}
 }
 
-module.exports = messageLogger
+function sum(a, b) {
+	return a + b;
+}
+
+module.exports = {messageLogger: messageLogger, sum: sum};

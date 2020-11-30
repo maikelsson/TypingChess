@@ -29,7 +29,9 @@ export default function Login() {
 	return (
 		<>
 			{error && <Alert variant="danger" dismissible="true">{error}</Alert>}
-			<Card>
+			<Card style={{
+				minWidth: '10em'
+			}}>
 				<Card.Body>
 					<h2 className="text-center mb-4">Log In</h2>
 					<Form onSubmit={handleSubmit}>

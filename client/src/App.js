@@ -22,7 +22,7 @@ function App() {
 				minHeight: "60vh",
 				padding: "0em"
 			}}>
-				<div className="w-100" style={{ minWidth: "25em"}}>
+				<div className="w-100" style={{ minWidth: "10em"}}>
 					<Router>
 						<AuthProvider>
 							<Switch>

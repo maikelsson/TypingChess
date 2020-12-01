@@ -130,7 +130,7 @@ class EventManager {
 		switch(data.event) {
 			case events.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE:
 				try {
-					targetRoom.game.validateMove(data.move);
+					targetRoom.game.validateMove(data.move, player);
 					io.in(player.roomId).emit('response', ({data: targetRoom.game.getBoardFen(), res: "SERVER_MOVE_SUCCESS"}))
 					messageLogger("EVENT", data.event, "SUCCESS");
 
@@ -139,6 +139,7 @@ class EventManager {
 					messageLogger("EVENT", data.event, "WARNING")
 				}
 				break;
+				
 			default:
 				return;
 		}

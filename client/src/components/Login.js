@@ -28,28 +28,36 @@ export default function Login() {
 
 	return (
 		<>
-			{error && <Alert variant="danger" dismissible="true">{error}</Alert>}
-			<Card style={{
-				minWidth: '10em'
+			<div className="d-flex align-items-center justify-content-center" style={{
+				minHeight: '50vh',
+				
 			}}>
-				<Card.Body>
-					<h2 className="text-center mb-4">Log In</h2>
-					<Form onSubmit={handleSubmit}>
-						<Form.Group id="username">
-							<Form.Label>Username</Form.Label>
-							<Form.Control required type="text" ref={nameRef}></Form.Control>
-						</Form.Group>
-						<Form.Group id="password">
-							<Form.Label>Password</Form.Label>
-							<Form.Control required type="password" ref={passwordRef}></Form.Control>
-						</Form.Group>
-						<Button className="w-100" disabled={isLoading} type="submit">Log In</Button>
-					</Form>
-				</Card.Body>
-			</Card>
-			<div className="w-100 text-center mt-2">
-				<p>No account yet? <Link to='/register'>Register now</Link></p>
+				{error && <Alert variant="danger" dismissible="true">{error}</Alert>}
+				<Card style={{
+					minWidth: '20em',
+					maxWidth: '500px',
+					width: '100vh'
+				}}>
+					<Card.Body>
+						<h2 className="text-center mb-4">Log In</h2>
+						<Form onSubmit={handleSubmit}>
+							<Form.Group id="username">
+								<Form.Label>Username</Form.Label>
+								<Form.Control required type="text" ref={nameRef}></Form.Control>
+							</Form.Group>
+							<Form.Group id="password">
+								<Form.Label>Password</Form.Label>
+								<Form.Control required type="password" ref={passwordRef}></Form.Control>
+							</Form.Group>
+							<Button className="w-100" disabled={isLoading} type="submit">Log In</Button>
+						</Form>
+					</Card.Body>
+					<Card.Footer>
+						<p className="w-100 text-center mt-2">No account yet? <Link to='/register'>Register now</Link></p>
+					</Card.Footer>
+				</Card>
 			</div>
+			
 		</>
 	)
 }

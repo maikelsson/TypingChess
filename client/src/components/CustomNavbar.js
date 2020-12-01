@@ -77,7 +77,9 @@ export default function CustomNavbar() {
 
 	return (
 		<>
-			<Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+			<Navbar sticky="top" collapseOnSelect expand="sm" bg="dark" variant="dark" style={{
+				borderRadius: "10px"
+			}}>
 				<Navbar.Brand to="/">TypeChess</Navbar.Brand>
 				<Navbar.Toggle aria-controls="responsive-navbar-nav" />
 				<Navbar.Collapse id="responsive-navbar-nav">
@@ -85,9 +87,8 @@ export default function CustomNavbar() {
 						<Nav.Link as={Link} to="/">
 							Home
 						</Nav.Link>
-						<Nav.Link>Forum</Nav.Link>
 						<NavDropdown title="Play" id="collasible-nav-dropdown">
-							<NavDropdown.Item as={Link} onClick={handleCreateGame}>Create New</NavDropdown.Item>
+							<NavDropdown.Item as={Button} onClick={handleCreateGame}>Create New</NavDropdown.Item>
 							<NavDropdown.Item as={Button} onClick={handleShow}>Rooms</NavDropdown.Item>
 
 							<NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
@@ -96,7 +97,7 @@ export default function CustomNavbar() {
 						</NavDropdown>
 					</Nav>
 					<Nav>
-						<Nav.Link as={Link} eventKey={2} onClick={handleLogout}>
+						<Nav.Link as={Link} eventKey={2} onClick={handleLogout} to="/">
 							Log Out
 						</Nav.Link>
 					</Nav>

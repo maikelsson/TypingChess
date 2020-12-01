@@ -1,0 +1,77 @@
+
+.navbar ul {
+	min-width: 25vh;
+	min-height: 6vh;
+	background-color: aquamarine;
+	border-radius: 7px;
+	padding-right: 1em;
+	list-style-type: none;
+}
+
+.navbar li {
+	float: left;
+}
+
+.navbar-title a{
+	justify-content: start;
+	font-size: 24px;
+	display: block;
+}
+
+.navbar-title:hover {
+	color: #f9f9f9;
+}
+
+.navbar-item {
+	justify-content: start;
+	display: block;
+	float: left;
+}
+
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-title {
+	color: black
+}
+
+.dropdown-title:hover {
+	color: white;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content:hover {
+	background-color: aqua;
+}
+
+.playerBox {
+	width: 100%;
+	background-color: whitesmoke;
+	height: 25%;
+	text-align: center;
+	align-items: center;
+	align-content: center;
+	border-radius: 4px;
+	padding-top: 1em;
+	color: black;
+}
+
+.playerBox p {
+	color: aqua;
+	font-size: large;
+}

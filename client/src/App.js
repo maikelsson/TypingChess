@@ -15,17 +15,20 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Game from './components/Game';
+import cssPlayground from './components/cssPlayground';
 
 function App() {
   	return (
-			<Container className="d-flex align-items-center justify-content-center" style={{
+			<Container fluid className="d-flex" style={{
 				minHeight: "60vh",
-				padding: "0em"
+				paddingLeft: '1em',
+				marginTop: '5px'
 			}}>
 				<div className="w-100" style={{ minWidth: "10em"}}>
 					<Router>
 						<AuthProvider>
 							<Switch>
+								<Route path="/playground" component={cssPlayground} />
 								<Route path="/login" component={Login} />
 								<Route path="/register" component={Register} /> 
 								<SocketProvider>

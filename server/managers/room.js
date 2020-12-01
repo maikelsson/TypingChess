@@ -14,7 +14,10 @@ class RoomManager {
 		return this.rooms.forEach(r => {
 			if(r.roomId === roomId && r.users.length < 2) {
 				r.users.push(player);
-				r.game.player2 = player;
+				r.game.playingAsBlack = player;
+				console.log(r.game.player1, r.game.player2);
+				r.game.setupGame();
+				console.log(r.game.state);
 			}
 		})
 	}

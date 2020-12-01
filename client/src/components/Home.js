@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom'; 
 import { AuthContext } from '../context/authentication/AuthState'
 import {useSocket} from '../context/socket/SocketProvider';
 import { Button, Container } from 'react-bootstrap';
@@ -20,19 +19,7 @@ export default function Home() {
 
 	return(
 		<>
-			<Container style={{
-				alignItems: 'center',
-				minHeight: '50vh'
-			}}>
-				
-				<div style={{
-					textAlign: 'center'
-				}}>
-					<CustomNavbar />
-					Home, Currently signed in as: {authenticatedUser.username}
-				</div>
-				
-			</Container>
+			<CustomNavbar></CustomNavbar>
 			
 		</>
 	)

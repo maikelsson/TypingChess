@@ -1,101 +1,89 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { AuthContext } from '../context/authentication/AuthState'
-import {useSocket} from '../context/socket/SocketProvider';
-import { Button, Container, Row, Col, Card } from 'react-bootstrap';
-import { ROOM_EVENT_TYPES, GAME_EVENT_TYPES } from '../constants/events';
-import { useHistory } from 'react-router-dom';
-import Chessboard from 'chessboardjsx';
-import CustomNavbar from './CustomNavbar';
-
+import React, {useState, useRef} from 'react';
+import CustomNavBar from './CustomNavbar';
+import Chessground from 'react-chessground';
 
 export default function Game() {
 
-	const { authenticatedUser } = useContext(AuthContext);
-	const socket = useSocket();
-	const history = useHistory();
-	const [boardState, setBoardState] = useState('start');
-	const [error, setError] = useState('');
+	const [moves, setMoves] = useState([]);
 	const moveRef = useRef();
-	const [move, setMove] = useState('')
 
-	useEffect(() => {
-		if(socket === null) return;
-		
-		socket.on('response', (data) => {
-			if(!data) return;
-			console.log("got response");
-			switch(data.res) {
-				case "SERVER_MOVE_SUCCESS":
-					console.log(data.data);
-					setBoardState(data.data);
-					return;
-				case "SERVER_MOVE_ERROR":
-					setError(data.data);
-					return;
-				default:
-					return;
-			}
-		});
-
-		return () => socket.off();
-
-	}, [socket]);
-
-	function handleLeave(e) {
+	function handleInput(e) {
 		e.preventDefault();
-		socket.emit('message', ({event: ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
-		history.push('/');
-	}
+		console.log("submit");
+		setMoves([...moves, moveRef.current.value]);
+		console.log(moves);
+		e.target.reset();
 
-	function handleMove(e) {
-		e.preventDefault();
-		socket.emit('game', ({event: GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
 	}
 
 	return (
-		<>
-			<Container style={{
-				alignItems: 'center'
-			}}>
-				<CustomNavbar />
-				<div style={{
-					minHeight: '5vh',
-					justifyItems: 'center',
-					justifyContent: 'center',
-					display: 'flex'
+		<div className="home-layout">
+			<CustomNavBar />
+			<div className="content">
+				<div className="board-container" style={{
+					height: '100vh'
 				}}>
-					GameView! <Button onClick={handleLeave}>Leave</Button>
-					<Button>Move!</Button>
-				</div>
-				{error ?? <p>{error}</p>}
-				<div style={board}>
-					<Chessboard position={boardState}/>
+					<div className="status-panel">
+						<h3>Game</h3>
+						<p>3</p>
+						<p>asd</p>
+					</div>
+					<Chessground />
 					<div style={{
-						backgroundColor: "red",
-						minHeight: "50vh",
-						minWidth: '30vh',
+						marginTop: "30px",
+						display: "flex",
+						alignItems: 'center',
 						justifyContent: 'center',
-						display: 'flex'
 					}}>
-						<p>test</p>
-						<p>test</p>
-						<p>test</p>
+						<p>Type your move: </p>
+
+						<form className="move-input" onSubmit={handleInput}>
+							<input className="move-input" type="text" ref={moveRef}/>
+							<input type="submit" hidden="true" onSubmit={handleInput}/>
+						</form>
 					</div>
 				</div>
-				<form onSubmit={handleMove} style={{
-					justifyContent: 'center',
-					display: 'flex'
+				<div className="side-container" style={{
+					height: '90vh'
 				}}>
-					<input type="text" ref={moveRef}></input>
-					<input type="submit" hidden={true} onSubmit={handleMove} ></input>
-				</form>
-			</Container>
-		</>
+					<div className="game-panel">
+						<div className="time-panel">
+							<div className="time">
+								<p>15:00</p>
+							</div>
+						</div>
+						<div className="player-panel">
+							<i className="indicator-offline"></i>
+							<p>Opponent</p>
+						</div>
+						<div className="history-panel">
+							<h4>Moves</h4>
+							<ol>
+								{moves.map((m, i) => 
+								(
+									<>
+										{console.log(i)}
+										{i % 2 === 0 ? <li className="index">{i === 0 ? i + 1 : i / 2 + 1}.</li> : null}
+										<li key={i}>{m}</li>
+									</>
+								))}
+							</ol>
+						</div>
+						<div className="bottom-button-container">
+							<button>S</button>
+						</div>
+						<div className="player-panel">
+							<i className="indicator-online"></i>
+							<p>My player</p>
+						</div>
+						<div className="time-panel">
+							<div className="time">
+								<p>15:00</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	)
-}
-
-const board = {
-	display: "flex",
-	alignItems: 'center',
-	justifyContent: 'center'
 }

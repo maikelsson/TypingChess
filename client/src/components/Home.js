@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { AuthContext } from '../context/authentication/AuthState'
 import {useSocket} from '../context/socket/SocketProvider';
-import { Button, Container } from 'react-bootstrap';
 import CustomNavbar from './CustomNavbar';
 
 export default function Home() {
@@ -20,7 +19,7 @@ export default function Home() {
 	return(
 		<>
 			<CustomNavbar></CustomNavbar>
-			
+			<p>asdasdasd</p>
 		</>
 	)
 }

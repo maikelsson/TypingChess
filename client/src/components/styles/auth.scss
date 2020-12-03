@@ -1,0 +1,91 @@
+@import "./colors";
+
+.auth-layout {
+	min-height: 100vh;
+	display: flex;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+		Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.auth-card {
+	margin: auto;
+	width: 50%;
+	min-height: 50vh;
+	min-width: 300px;
+	border-radius: 5px;
+	padding: 2em;
+	background-color: $secondary-color;
+	color: $text-color;
+	font-size: 20px;
+	box-shadow: 0 0 20px 5px rgba(63, 63, 63, 0.212);
+}
+
+.auth-card h2 {
+	text-align: center;
+	font-size: 35px;
+	border-bottom: 1px solid white;
+	padding-bottom: 0.5em;
+}
+
+.auth-card label {
+	display: inline-block;
+	margin-top: 1em;
+	margin-bottom: 0.4em;
+	font-size: 20px;
+}
+
+.auth-card p {
+	font-size: 17px;
+}
+
+.auth-card input {
+	border: 0;
+	outline: 0;
+	padding: 1em 1em;
+	display: inline-block;
+	background: #24292e96;
+	border-bottom: 1px solid #24292e;
+	border-radius: 2px;
+	width: 100%;
+	box-sizing: border-box;
+	color: #ffffff;
+	font-size: 15px;
+	transition-duration: 0.2s;
+
+	&:focus {
+		border-bottom: 1px solid #2dc15054;
+		box-shadow: 0 0 5px 3px rgba(255, 255, 255, 0.041);
+		transition-duration: 0.2s;
+	}
+
+	&:hover {
+		box-shadow: 0 0 5px 3px rgba(255, 255, 255, 0.041);
+	}
+}
+
+.spacer {
+	height: 30px;
+}
+
+.auth-card button {
+	width: 120px;
+	margin: 0 auto;
+	display: block;
+	padding: 1em;
+	border-radius: 5px;
+	border: 0;
+	background-color: #24292e;
+	color: $text-color;
+	transition: 0.2s;
+	font-size: 17px;
+
+	&:hover {
+		background-color: #2dc14f;
+		color: $primary-color;
+	}
+
+	&:disabled {
+		background-color: red;
+		cursor: not-allowed;
+	}
+}

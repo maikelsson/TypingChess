@@ -4,6 +4,7 @@ import { AuthContext } from '../context/authentication/AuthState';
 
 import './styles/auth.scss'
 import './styles/alerts.scss'
+import AuthContainer from './containers/AuthContainer';
 
 export default function Login() {
 	const passwordRef = useRef();
@@ -31,7 +32,7 @@ export default function Login() {
 
 	return (
 		<>
-			<div className="auth-layout">
+			<AuthContainer>
 				<div className="auth-card">
 					{error ?? <p></p>}
 					<form onSubmit={handleSubmit}>
@@ -51,7 +52,8 @@ export default function Login() {
 						}}><strong>Register</strong></Link></span>
 					</p>
 				</div>
-			</div>
+			</AuthContainer>
+
 		</>
 	)
 }

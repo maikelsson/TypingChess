@@ -1,6 +1,7 @@
 import React, { useState, useContext, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { AuthContext } from '../context/authentication/AuthState';
+import AuthContainer from './containers/AuthContainer';
 
 import './styles/auth.scss';
 
@@ -29,29 +30,30 @@ export default function Register() {
 
 	return (
 		<>
-			<div className="auth-layout">
-				<div className="auth-card">
-					{error ?? <p></p>}
-					<form onSubmit={handleSubmit}>
-						<h2>Register</h2>
-						<label>Username</label>
-						<input required type="text" ref={nameRef} autoComplete="true"></input>
-						<label>Password</label>
-						<input required type="password" ref={passwordRef} autoComplete="true"></input>
-						<label>Confirm Password</label>
-						<input required type="password" ref={confirmPasswordRef} autoComplete="true"></input>
-						<div className="spacer"/>
-						<button type="submit">Register</button>
-					</form>
-					<div className="spacer" />
-					<p>
-						Already have an account? <span><Link to="/login" style={{
-							color: 'white',
-							textDecoration: 'none'
-						}}><strong>Login</strong></Link></span>
-					</p>
-				</div>
+		<AuthContainer>			
+			<div className="auth-card">
+				{error ?? <p></p>}
+				<form onSubmit={handleSubmit}>
+					<h2>Register</h2>
+					<label>Username</label>
+					<input required type="text" ref={nameRef} autoComplete="true"></input>
+					<label>Password</label>
+					<input required type="password" ref={passwordRef} autoComplete="true"></input>
+					<label>Confirm Password</label>
+					<input required type="password" ref={confirmPasswordRef} autoComplete="true"></input>
+					<div className="spacer"/>
+					<button type="submit">Register</button>
+				</form>
+				<div className="spacer" />
+				<p>
+					Already have an account? <span><Link to="/login" style={{
+						color: 'white',
+						textDecoration: 'none'
+					}}><strong>Login</strong></Link></span>
+				</p>
 			</div>
+		</AuthContainer>
+
 		</>
 	)
 }

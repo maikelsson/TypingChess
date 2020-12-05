@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
 import { AuthContext } from '../context/authentication/AuthState'
 import {useSocket} from '../context/socket/SocketProvider';
-import CustomNavbar from './CustomNavbar';
+import MainContainer from './containers/MainContainer';
 
 export default function Home() {
 	const { authenticatedUser } = useContext(AuthContext);
@@ -18,7 +18,9 @@ export default function Home() {
 
 	return(
 		<>
-			<CustomNavbar></CustomNavbar>
+		<MainContainer>
+
+		</MainContainer>
 			<p>asdasdasd</p>
 		</>
 	)

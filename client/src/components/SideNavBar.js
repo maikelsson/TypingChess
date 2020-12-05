@@ -5,7 +5,7 @@ import * as EVENTS from '../constants/events';
 
 import {useSocket} from '../context/socket/SocketProvider';
 
-import './styles/home.scss';
+import './styles/main.scss';
 
 export default function CustomNavbar() {
 

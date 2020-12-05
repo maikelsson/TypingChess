@@ -24,10 +24,10 @@ function App() {
 							<Route path="/home" component={newHome} /> 
 							<Route path="/lobby" component={Lobby} />
 							<Route exact path="/play" component={Game} />
-							<SocketProvider>
-								<PrivateRoute exact path='/' component={Home} />
-							</SocketProvider>
-							<Route path="/" component={Home} />
+							<PrivateRoute path="/" component={Home} />
+						<SocketProvider>
+							<PrivateRoute exact path='/' component={Home} />
+						</SocketProvider>
 						</Switch>
 					</AuthProvider>
 				</Router>		

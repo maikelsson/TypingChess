@@ -1,13 +1,12 @@
 import React from 'react'
-import CustomNavbar from './CustomNavbar'
+import MainContainer from './containers/MainContainer'
 
 export default function newHome() {
 	return (
-		<div className="home-layout">
-			<CustomNavbar />
-			<div className="content">
-				<p>kakka</p>
-			</div>
-		</div>
+		<>
+			<MainContainer>
+				<p>home</p>
+			</MainContainer>
+		</>
 	)
 }

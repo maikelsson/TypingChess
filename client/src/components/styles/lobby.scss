@@ -1,5 +1,7 @@
 @import "./colors";
 
+$board-size: 50rem;
+
 @keyframes pulse {
 	0% {
 		background: #2dc14f;
@@ -41,12 +43,17 @@
 }
 
 .board-container {
-	justify-content: center;
-	align-items: center;
+	width: 50vw;
+	height: auto;
 	font-size: 20px;
 	color: $text-color;
 	display: flex;
 	flex-direction: column;
+
+	.cg-wrap {
+		width: 50vw;
+		height: 50vw;
+	}
 
 	div p {
 		margin-right: 10px;
@@ -81,152 +88,12 @@
 	}
 }
 
-.side-container {
-	width: 100%;
-	min-width: 40%;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: center;
-}
-
-.game-panel {
-	margin: 0 auto;
-	margin-left: 40px;
-	background-color: $secondary-color;
-	border-radius: 15px;
-	display: flex;
-	flex-wrap: wrap;
-	height: auto;
-	width: 100%;
-	max-width: 400px;
-	min-width: 200px;
-	box-shadow: 0 0 5px 5px rgba($color: $primary-color, $alpha: 0.1);
-
-	.player-panel {
-		background-color: $secondary-color;
-		width: 100%;
-		height: 4vh;
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		border-top: 1px solid darken($secondary-color, 5%);
-		border-bottom: 1px solid darken($secondary-color, 5%);
-
-		p {
-			display: inline-block;
-			margin: 0px 5px 0px 5px;
-		}
-
-		.indicator {
-			&-online {
-				margin-left: 0.7em;
-				display: inline-block;
-				width: 0.7em;
-				height: 0.7em;
-				border-radius: 50%;
-				background: #2dc14f;
-				animation: 2s ease-in-out infinite pulse;
-			}
-
-			&-offline {
-				margin-left: 0.7em;
-				display: inline-block;
-				width: 0.7em;
-				height: 0.7em;
-				border-radius: 50%;
-				background-color: red;
-			}
-		}
-	}
-
-	.bottom-button-container {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		background-color: darken($secondary-color, 5%);
-		height: 5vh;
-		width: 100%;
-		padding: 0;
-
-		button {
-			border: 0;
-			border-radius: 10px;
-			padding: 1em;
-			background-color: $secondary-color;
-			width: 0.4em;
-			height: 0.4em;
-		}
-	}
-
-	.history-panel {
-		background-color: $secondary-color;
-		width: 100%;
-		height: 20vh;
-		margin: 0;
-
-		h4 {
-			font-size: 25px;
-			margin: 5px 0px 2px 5px;
-		}
-
-		ol {
-			list-style: none;
-			padding: 0;
-			width: 100%;
-			display: flex;
-			flex-wrap: wrap;
-			overflow: auto;
-			height: auto;
-			max-height: 15vh;
-			line-height: 20px;
-
-			li {
-				text-align: start;
-				width: 35%;
-				margin-left: 5px;
-				vertical-align: center;
-
-				&.index {
-					padding: 0.3em;
-					text-align: center;
-					width: 15%;
-					background-color: darken($secondary-color, 5%);
-					margin-left: 0;
-				}
-			}
-		}
-	}
-
-	.time-panel {
-		height: 6vh;
-		padding: 0;
-		background-color: $primary-color;
-		display: flex;
-		justify-content: flex-start;
-		width: 100%;
-		text-align: center;
-
-		.time {
-			height: auto;
-			border-bottom: $primary-color;
-			background-color: $secondary-color;
-			font-size: 40px;
-
-			p {
-				margin: 0px 5px 0px 5px;
-			}
-		}
-	}
-}
-
 .side-panel {
 	width: 100%;
-	min-width: 30vh;
-	height: 80%;
+	min-width: 30vw;
+	height: 70%;
+	margin-left: 20px;
 	background-color: $secondary-color;
-	margin-left: 50px;
-	margin-right: 10px;
 	border-radius: 5px;
 }
 

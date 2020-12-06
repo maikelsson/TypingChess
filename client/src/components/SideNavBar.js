@@ -1,26 +1,13 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { AuthContext } from '../context/authentication/AuthState';
-import * as EVENTS from '../constants/events';
-
-import {useSocket} from '../context/socket/SocketProvider';
+import * as EVENTS from '../constants/events/server';
 
 import './styles/main.scss';
 
 export default function CustomNavbar() {
 
-	const [show, setShow] = useState(false);
-	const [loading, setLoading] = useState(false);
-
-	const [rooms, setRooms] = useState([]);
-
-	const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-	const socket = useSocket();
-	const history = useHistory();
 	const { logout } = useContext(AuthContext);
-
 
 	//useEffect(() => {
 	//	if(!socket) return;
@@ -49,33 +36,6 @@ export default function CustomNavbar() {
 		await logout();
 	}
 
-	function handleRefresh(e) {
-		e.preventDefault();
-		// get rooms from server
-		socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
-		setLoading(true);
-
-	}
-
-	function handleJoinRoom(e, roomId) {
-		e.preventDefault();
-		console.log("joining room", roomId);
-		socket.emit('request', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM, data: roomId}));
-		history.push("/game");
-	}
-
-	function onEnteringRoomsModal() {
-		setLoading(true);
-		// get rooms from server
-
-		setLoading(false);
-	}
-
-	function handleCreateGame() {
-		socket.emit('message', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_CREATE_ROOM}));
-		history.push("/game");
-	}
-
 	return (
 		<div className="sidenav">
 			<ul>
@@ -83,6 +43,7 @@ export default function CustomNavbar() {
 				<li><Link to="/home">Home</Link></li>
 				<li><Link to="/lobby">Play</Link></li>
 				<li><Link to="/play">Game</Link></li>
+				<li><button onClick={handleLogout}>LogOut</button></li>
 			</ul>
 		</div>
 	)

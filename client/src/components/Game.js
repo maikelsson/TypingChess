@@ -1,23 +1,53 @@
-import React, {useState, useRef} from 'react';
-import CustomNavBar from './SideNavBar';
+import React, {useState, useRef, useEffect} from 'react';
 import Chessground from 'react-chessground';
+import { useSocket } from '../context/socket/SocketProvider';
 import MainContainer from './containers/MainContainer';
+import * as SERVER_EVENT from '../constants/events/server';
+import * as CLIENT_EVENT from '../constants/events/client';
 
 import './styles/game.scss';
 
 export default function Game() {
 
-	const [boardState, setBoardState] = useState('start');
+	const socket = useSocket();
+	const [boardState, setBoardState] = useState('');
 	const [moves, setMoves] = useState([]);
 	const moveRef = useRef();
 
+	useEffect(() => {
+		if(socket === null) return;
+
+		//socket.emit('message', ({data: player, event: EVENTS.ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS}));
+
+		socket.on('response', (data) => {
+			if(!data) return;
+			switch(data.res) {
+				case "SERVER_MOVE_SUCCESS":
+					console.log(data.data);
+					setBoardState(data.data);
+					setMoves(data.history);
+					break;
+				case "SERVER_MOVE_ERROR":
+					console.log("not valid move!");
+					break;
+				default: 
+					return; 
+			}
+
+			return () => socket.off('response');
+
+		}, [socket])
+
+		return () => {
+			socket.emit('message', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}));
+			socket.off('response');
+		}
+	}, [socket])
+
 	function handleInput(e) {
 		e.preventDefault();
-		console.log("submit");
-		setMoves([...moves, moveRef.current.value]);
-		console.log(moves);
+		socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
 		e.target.reset();
-
 	}
 
 	return (
@@ -29,7 +59,7 @@ export default function Game() {
 						<p>vs</p>
 						<p>Opponent</p>
 					</div>
-					<Chessground fen={moves}/>
+					<Chessground fen={boardState}/>
 					<div style={{
 						marginTop: "30px",
 						display: "flex",

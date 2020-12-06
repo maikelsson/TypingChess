@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { AuthContext } from '../context/authentication/AuthState'
 import {useSocket} from '../context/socket/SocketProvider';
-import { ROOM_EVENT_TYPES, GAME_EVENT_TYPES } from '../constants/events';
+import { ROOM_EVENT_TYPES, GAME_EVENT_TYPES } from '../constants/events/server';
 import { useHistory } from 'react-router-dom';
 
-import * as EVENTS from '../constants/events';
+import * as EVENTS from '../constants/events/server';
 
 import Chessground from 'react-chessground';
 import "react-chessground/dist/styles/chessground.css";
@@ -35,48 +35,56 @@ export default function Lobby() {
 	const { authenticatedUser } = useContext(AuthContext);
 	const socket = useSocket();
 	const history = useHistory();
-	const [boardState, setBoardState] = useState('start');
 	const [error, setError] = useState('');
 	const [activeTab, setActiveTab] = useState('newgame');
+	const [rooms, setRooms] = useState([]);
 
-	//useEffect(() => {
-	//	if(socket === null) return;
-	//	
-	//	socket.on('response', (data) => {
-	//		if(!data) return;
-	//		console.log("got response");
-	//		switch(data.res) {
-	//			case "SERVER_MOVE_SUCCESS":
-	//				console.log(data.data);
-	//				setBoardState(data.data);
-	//				return;
-	//			case "SERVER_MOVE_ERROR":
-	//				setError(data.data);
-	//				return;
-	//			default:
-	//				return;
-	//		}
-	//	});
-//
-	//	return () => socket.off();
-//
-	//}, [socket]);
+	useEffect(() => {
+		if(socket === null) return;
+		
+		socket.on('response', (data) => {
+			if(!data) return;
+			console.log("got response");
+			switch(data.res) {
+				case EVENTS.RESPONSE_EVENT_TYPES.PLAYER_REQUEST_ROOMS_SUCCESS:
+					console.log(data.data);
+					setRooms(data.data);
+					return;
+				case "SERVER_MOVE_ERROR":
+					setError(data.data);
+					return;
+				default:
+					return;
+			}
+		});
 
-	function getRooms() {
+		return () => socket.off('response');
+
+	}, [socket]);
+
+	function requestRoomsFromServer() {
 		console.log("getting rooms");
-		//socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
+		setTimeout(() => {
+			socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
+		}, 3000);
 	}
 
-	function handleLeave(e) {
+	function handleJoinRoom(e, id) {
 		e.preventDefault();
-		socket.emit('message', ({event: ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
-		history.push('/');
+		socket.emit('request', ({event: ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM, data: id}))
+		history.push("/play");
 	}
 
 	function handleTabClick(e) {
 		e.preventDefault();
 		setActiveTab(e.target.name);
 	}
+
+	function handleCreateRoom(e) {
+		e.preventDefault();
+		socket.emit('message', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_CREATE_ROOM}));
+		history.push("/play");
+	} 
 
 	return (
 			<>
@@ -97,14 +105,14 @@ export default function Lobby() {
 
 						<div name="newgame" className={activeTab === 'newgame' ? 'tab-content-active' : 'tab-content-disabled'}>
 							<h2>New game</h2>
-							<button className="create-new-btn">Create new</button>
+							<button className="create-new-btn" onClick={handleCreateRoom}>Create new</button>
 						</div>
 
 						<div name="rooms" className={activeTab === 'rooms' ? 'tab-content-active' : 'tab-content-disabled'}>
-							{activeTab === 'rooms' ? getRooms() : null}
+							{activeTab === 'rooms' ? requestRoomsFromServer() : null}
 							<h2>Rooms</h2>
 							<div className="room-list">
-								{dummyRooms ? 
+								{rooms ? 
 								<>
 									<ul className="header">
 										<li>
@@ -118,14 +126,14 @@ export default function Lobby() {
 									height: '380px',
 									overflow: "hidden",
 									overflowY: "scroll"}}>
-										{dummyRooms.map((r) => (
+										{rooms.map((r) => (
 											<>
 												{r.players.length < 2 
-												?	<li>
+												?	<li key={r.id}>
 														<p>{r.name}</p>
 														<p>{r.time}</p>
 														<p>{r.type}</p>
-														<button>Join</button>					
+														<button onClick={(e) => handleJoinRoom(e, r.id)}>Join</button>					
 													</li> 
 												: null}
 											</>))}

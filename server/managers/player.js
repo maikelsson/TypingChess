@@ -5,30 +5,20 @@ class PlayerManager {
 		this.players = [];
 	}
 
-	addPlayer(player) {
-		let initialPlayer = this.findPlayerBySocketId(player.socketId);
-		if(!initialPlayer) {
-			this.players.push(player);
-		}	else {
-			// removing default entry from players and adding new with values received from client
-			this.removePlayer(player.socketId);
-			this.players.push(player);
-		}
-
+	updatePlayerDetails(player) {	
+		this.removePlayer(player.id);
+		this.players.push(player);		
 		messageLogger("debug", "Player added to list", "info");
 	}
 
-	removePlayer(socketId) {
-		this.players = this.players.filter((initialPlayer) => initialPlayer.socketId !== socketId);
-		messageLogger("debug", "player removed from list!", "info");
+	removePlayer(id) {
+		this.players = this.players.filter((initialPlayer) => initialPlayer.id !== id);
+		messageLogger("debug", "Player removed from list!", "info");
 	}
 
-	findPlayerBySocketId(socketId) {
-		return this.players.find((initialPlayer) => initialPlayer.socketId === socketId);
+	findPlayerById(id) {
+		return this.players.find((player) => player.id === id);
 	}
-
-
-
 }
 
 module.exports = PlayerManager;

@@ -1,8 +1,13 @@
 
-
 class Player {
-	constructor() {
-		this.game = new Chess();		
+	constructor(name, socketId, roomId) {
+		this.name = name;
+		this.id = socketId;
+		this.roomId = roomId;
+	}
+
+	getPlayerCurrentRoomId() {
+		return this.roomId;
 	}
 }
 

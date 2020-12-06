@@ -1,7 +1,9 @@
-export function validatePassword(pw, confirmPw) {
-	if(pw !== confirmPw) return false;
-	console.log(pw.length)
-	if(pw.length > 5) return true;
+const MIN_PASSWORD_LENGTH = 4;
+
+export function validatePassword(password, confirmPassword) {
+	if(password !== confirmPassword) return false;
+	console.log(password.length)
+	if(password.length > MIN_PASSWORD_LENGTH) return true;
 	else return false;
 
 }

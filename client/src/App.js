@@ -10,7 +10,6 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Home from './components/Home';
 import Lobby from './components/Lobby';
-import newHome from './components/newHome';
 import Game from './components/Game';
 
 function App() {
@@ -20,14 +19,14 @@ function App() {
 					<AuthProvider>
 						<Switch>
 							<Route path="/login" component={Login} />
-							<Route path="/register" component={Register} /> 
-							<Route path="/home" component={newHome} /> 
-							<Route path="/lobby" component={Lobby} />
-							<Route exact path="/play" component={Game} />
-							<PrivateRoute path="/" component={Home} />
-						<SocketProvider>
-							<PrivateRoute exact path='/' component={Home} />
-						</SocketProvider>
+							<Route path="/register" component={Register} />
+							<SocketProvider>
+								<PrivateRoute path="/home" component={Home} /> 
+								<PrivateRoute exact path="/" component={Home} />
+								<PrivateRoute path="/lobby" component={Lobby}/>
+								<PrivateRoute exact path="/play" component={Game} />
+							</SocketProvider>
+							<Route exact path="/" component={Login} />
 						</Switch>
 					</AuthProvider>
 				</Router>		

@@ -1,52 +1,48 @@
+const { v4: uuidv4} = require('uuid');
 
 class RoomManager {
 	constructor() {
 		this.rooms = []
 	}
 
+	createNewRoom(player) {
+
+	}	
+
 	addRoom(room) {
 		if(!room) return;
 		this.rooms.push(room);
-		console.log("addroom", this.rooms);
+		console.log("added room", this.rooms);
 	}
 
 	addPlayerToRoom(player, roomId) {
-		return this.rooms.forEach(r => {
-			if(r.roomId === roomId && r.users.length < 2) {
-				r.users.push(player);
-				r.game.player2 = player;
-			}
-		})
-	}
-
-	findPlayerFromRoomById(socketId) {
-		this.rooms.forEach(room => {
-			return;
-		})
+		let room = this.findRoomById(roomId);
+		room.addPlayerToRoom(player);
+		player.roomId = room.id;
+		room.getGame().setupGame();
 	}
 
 	findRoomById(id) {
-		return this.rooms.find(r => r.roomId === id);
+		return this.rooms.find((r) => r.id === id);
 	}
 
-	removePlayerFromRoomById(roomId, socketId) {
-		let room = this.rooms.find(r => roomId === r.roomId);
+	removePlayerFromRoomById(player) {
+		let room = this.findRoomById(player.roomId);
 		if(!room) return;
-		
+		console.log(room.id);
 		// Don't remove room if there is still users 
-		if(room.users.length > 1) {
-			this.rooms = this.rooms.map((r) => {
-				r.users = r.users.filter((u) => u.socketId !== socketId);
-				return r;
-			});
+		if(room.players.length > 1) {
+			room.removePlayerFromRoom(player);
 		} else {
-			console.log("removeById", JSON.stringify(this.rooms));
-			this.removeRoom(roomId); 
+			console.log("before Room removed from list!", this.rooms);
+			this.removeRoomByRoomId(room.id); 
+			console.log("after Room removed from list!", this.rooms);
+
 		}
 	}
 
-	removeRoom(roomId) {
-		this.rooms = this.rooms.filter(r => r.roomId !== roomId);
+	removeRoomByRoomId(id) {
+		this.rooms = this.rooms.filter((r) => r.id !== id);
 	}
 
 	getRooms() {

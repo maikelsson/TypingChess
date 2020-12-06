@@ -1,0 +1,74 @@
+@import "./colors";
+
+.main-container {
+	display: flex;
+	flex-direction: row;
+	color: $text-color;
+	min-height: 100%;
+}
+
+.sidenav-container {
+	width: 8rem;
+	height: 100%;
+
+	@media (max-width: 250px) {
+		width: 4rem;
+	}
+}
+
+.content-container {
+	padding: 1rem;
+	flex-grow: 1;
+	display: flex;
+	justify-content: start;
+	margin: 0;
+	justify-content: center;
+	align-items: center;
+}
+
+.sidenav {
+	height: 100%;
+
+	ul {
+		list-style-type: none;
+		margin-top: 0;
+		padding: 0;
+		background-color: rgba(0, 0, 0, 0.123);
+		height: 100%;
+		overflow: auto;
+
+		li a {
+			display: block;
+			color: $text-color;
+			padding: 8px 16px;
+			text-decoration: none;
+
+			&:hover {
+				background-color: rgba(0, 0, 0, 0.226);
+			}
+		}
+	}
+	li h2 {
+		display: block;
+		color: $text-color;
+		padding: 8px 16px;
+		text-decoration: none;
+		font-size: 20px;
+	}
+}
+
+.cg-wrap.coords {
+	font-size: 200px;
+}
+.coords.ranks {
+	font-size: 20px;
+}
+
+.ranks {
+	color: $text-color;
+}
+
+.files {
+	color: $text-color;
+	font-size: 30px;
+}

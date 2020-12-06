@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { AuthContext } from '../authentication/AuthState';
 import { useHistory } from 'react-router-dom';
-import * as EVENTS from '../../constants/events';
+import * as EVENTS from '../../constants/events/server';
 
 const SocketContext = createContext();
 

@@ -6,7 +6,7 @@ export const PrivateRoute = ({component: Component, ...rest}) => {
 	const { isAuthenticated } = useContext(AuthContext);
 	useEffect(() => {
 		console.log(isAuthenticated);
-	})
+	}, [isAuthenticated])
 
 	return(
 		<Route {...rest} render={(props) => (

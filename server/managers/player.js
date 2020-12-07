@@ -5,9 +5,16 @@ class PlayerManager {
 		this.players = [];
 	}
 
-	updatePlayerDetails(player) {	
+	addPlayer(player) {
+		if(!player) return;
+		this.players.push(player);
+		console.log("added player to playerManager!");
+	}
+
+	updatePlayerDetails(player) {
+		if(!player) return;	
 		this.removePlayer(player.id);
-		this.players.push(player);		
+		this.addPlayer(player);		
 		messageLogger("debug", "Player added to list", "info");
 	}
 

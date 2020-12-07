@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { AuthContext } from '../context/authentication/AuthState'
+import React, { useEffect, useState } from 'react';
 import {useSocket} from '../context/socket/SocketProvider';
 import { ROOM_EVENT_TYPES } from '../constants/events/server';
 import { useHistory } from 'react-router-dom';
@@ -14,16 +13,15 @@ import MainContainer from './containers/MainContainer';
 
 export default function Lobby() {
 
-	const { authenticatedUser } = useContext(AuthContext);
 	const socket = useSocket();
 	const history = useHistory();
 	const [error, setError] = useState('');
 	const [activeTab, setActiveTab] = useState('newgame');
-	const [rooms, setRooms] = useState([]);
+	const [rooms, setRooms] = useState();
 
 	useEffect(() => {
 		if(socket === null) return;
-		
+		socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
 		socket.on('response', (data) => {
 			if(!data) return;
 			console.log("got response");
@@ -45,12 +43,12 @@ export default function Lobby() {
 		console.log("getting rooms");
 		setTimeout(() => {
 			socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
-		}, 3000);
+		}, 2000);
 	}
 
 	function handleJoinRoom(e, id) {
 		e.preventDefault();
-		socket.emit('request', ({event: ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM, data: id}))
+		socket.emit('request', ({event: ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM, roomId: id}))
 		history.push("/play");
 	}
 
@@ -94,7 +92,7 @@ export default function Lobby() {
 								{rooms ? 
 								<>
 									<ul className="header">
-										<li>
+										<li key="rooms">
 											<p>name</p>
 											<p>time</p>
 											<p>type</p>

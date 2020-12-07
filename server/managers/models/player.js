@@ -1,14 +1,10 @@
 
 class Player {
-	constructor(name, socketId, roomId) {
+	constructor(name, socketId) {
 		this.name = name;
 		this.id = socketId;
-		this.roomId = roomId;
+		this.roomId = "";
 		this.side = 'white';
-	}
-
-	getPlayerCurrentRoomId() {
-		return this.roomId;
 	}
 }
 

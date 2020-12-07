@@ -22,7 +22,7 @@ export function SocketProvider({children}) {
 
 		newSocket.on('connect', () => {
 			console.log("socket connected!");
-			newSocket.emit('message', ({event: EVENTS.CONNECTION_EVENT_TYPES.ADD_CONNECTION, data: authenticatedUser}));
+			newSocket.emit('message', ({event: EVENTS.CONNECTION_EVENT_TYPES.UPDATE_CONNECTION, data: authenticatedUser}));
 		});
 
 		newSocket.on('response', (data) => {
@@ -38,7 +38,7 @@ export function SocketProvider({children}) {
 			history.push('/login');
 		})
 
-		return () => newSocket.close();
+		return () => newSocket.close('connect');
 	}, [authenticatedUser, history])
 
 	return (

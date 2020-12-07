@@ -2,7 +2,6 @@ const PlayerManager = require('./player.js');
 const Player = require('./models/player');
 
 const RoomManager = require('./room.js');
-const Room = require('./models/room');
 
 const { messageLogger } = require('../utils/logger');
 const { CONNECTION_EVENT_TYPES, ROOM_EVENT_TYPES, REQUEST_EVENT_TYPES, RESPONSE_EVENT_TYPES, GAME_EVENT_TYPES } = require('../../client/src/constants/events/server');
@@ -16,9 +15,9 @@ class EventManager {
 	// this can be trimmed ?
 	onConnection(socket) {
 		if(!socket) return;
-		let defaultPlayer = new Player("", socket.id, "");
+		let defaultPlayer = new Player("", socket.id);
 		console.log("onConnection", defaultPlayer);
-		this.playerManager.players.push(defaultPlayer);
+		this.playerManager.addPlayer(defaultPlayer);
 		messageLogger("server" ,`New client connection ${defaultPlayer.id}`, "SUCCESS");
 	}
 
@@ -30,6 +29,7 @@ class EventManager {
 	onMessage(socket, data) {
 		if(!data || !socket) return;
 		let player = this.playerManager.findPlayerById(socket.id);
+		
 		if(!player) {
 			messageLogger("EVENT", "Couldn't find the user", "WARNING");
 			return;
@@ -38,32 +38,27 @@ class EventManager {
 		messageLogger("EVENT", data.event, "SUCCESS");
 
 		switch(data.event) {
-			case CONNECTION_EVENT_TYPES.ADD_CONNECTION: // rename to update
-				let p = new Player(data.data.username, socket.id, "");
-				this.playerManager.updatePlayerDetails(p);
+			case CONNECTION_EVENT_TYPES.UPDATE_CONNECTION: // rename to update
+				let targetPlayer = new Player(data.data.username, socket.id);
+				this.playerManager.updatePlayerDetails(targetPlayer);
 				console.log("playerManager players", this.playerManager.players);
 				break;
 
 			case ROOM_EVENT_TYPES.PLAYER_CREATE_ROOM:
-				if(player.roomId !== "") return;
+				if(player.roomId !== "") return; // leave room functionality
 
-				let room = new Room(player.name);
-				room.addPlayerToRoom(player);
-				this.roomManager.addRoom(room);
+				this.roomManager.onPlayerCreateRoom(player);
 				socket.join(player.roomId);
 				return;
 			
 			case ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM:	
 				if(player.roomId === "") return;
-				this.roomManager.removePlayerFromRoomById(player);
+				socket.to(player.roomId).emit('response', ({currentState: "PLAYER_LEFT", res: "PLAYER_LEFT_ROOM"}));
+				this.roomManager.onPlayerLeaveRoom(player);
 				socket.leave(player.roomId);
-				player.roomId = "";
 				console.log("player leaved room", player);
 				return;
-			
-			case ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS:
-				
-
+		
 			default:
 				return;
 		}
@@ -72,6 +67,8 @@ class EventManager {
 	onRequest(socket, data, io) {
 		if(!socket || !io) return;
 		let player = this.playerManager.findPlayerById(socket.id);
+		let targetRoom = this.roomManager.findRoomById(player.roomId);
+
 		if(!player) {
 			messageLogger("EVENT", "Couldn't find the player", "WARNING");
 			return;
@@ -84,10 +81,18 @@ class EventManager {
 				break;
 
 			case ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM:
-				if(player.roomId !== "") return;
-				this.roomManager.addPlayerToRoom(player, data.data);
+				//if(!player.room) return;
+				this.roomManager.onPlayerJoinRoom(player, data.roomId);
 				socket.join(player.roomId);
 				break;
+
+			case ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS:
+				if(player.roomId === "") return;
+				io.in(player.roomId).emit('response', (
+					{white: targetRoom.getPlayerWhite(), 
+						black: targetRoom.getPlayerBlack(),
+						currentState: targetRoom.game.getGameState(), 
+						res: 'JOIN_ROOM_SUCCESS'}))
 
 			default:
 				return;
@@ -107,7 +112,13 @@ class EventManager {
 			case GAME_EVENT_TYPES.PLAYER_MAKE_MOVE:
 				try {
 					targetRoom.game.validateMove(data.move, player);
-					io.in(player.roomId).emit('response', ({data: targetRoom.game.getBoardFen(), res: "SERVER_MOVE_SUCCESS", history: targetRoom.game.getHistory()}))
+					io.in(player.roomId).emit('response', ({
+						fen: targetRoom.game.getBoardFen(),
+						history: targetRoom.game.getHistory(),
+						currentState: targetRoom.game.getGameState(),
+						color: targetRoom.game.getTurnColor(),
+						res: "SERVER_MOVE_SUCCESS"}))
+
 					messageLogger("EVENT", data.event, "SUCCESS");
 
 				} catch (error) {

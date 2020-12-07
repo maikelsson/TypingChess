@@ -1,21 +1,23 @@
-const { v4: uuidv4} = require('uuid');
+const Room = require('./models/room');
 
 class RoomManager {
 	constructor() {
 		this.rooms = []
 	}
 
-	createNewRoom(player) {
+	createRoom(player) {
+		let newRoom = new Room(player);
+		player.roomId = newRoom.id;
+		this.rooms.push(newRoom);
+	}
 
-	}	
-
-	addRoom(room) {
-		if(!room) return;
-		this.rooms.push(room);
+	onPlayerCreateRoom(player) {
+		if(!player) return;
+		this.createRoom(player);
 		console.log("added room", this.rooms);
 	}
 
-	addPlayerToRoom(player, roomId) {
+	onPlayerJoinRoom(player, roomId) {
 		let room = this.findRoomById(roomId);
 		room.addPlayerToRoom(player);
 		player.roomId = room.id;
@@ -25,7 +27,7 @@ class RoomManager {
 		return this.rooms.find((r) => r.id === id);
 	}
 
-	removePlayerFromRoomById(player) {
+	onPlayerLeaveRoom(player) {
 		let room = this.findRoomById(player.roomId);
 		if(!room) return;
 		console.log(room.id);

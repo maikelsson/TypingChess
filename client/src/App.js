@@ -26,7 +26,7 @@ function App() {
 								<PrivateRoute path="/lobby" component={Lobby}/>
 								<PrivateRoute exact path="/play" component={Game} />
 							</SocketProvider>
-							<Route exact path="/" component={Login} />
+							<Route path="/" component={Home} />
 						</Switch>
 					</AuthProvider>
 				</Router>		

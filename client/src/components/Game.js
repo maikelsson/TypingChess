@@ -3,9 +3,9 @@ import Chessground from 'react-chessground';
 import { useSocket } from '../context/socket/SocketProvider';
 import MainContainer from './containers/MainContainer';
 import * as SERVER_EVENT from '../constants/events/server';
-import * as CLIENT_EVENT from '../constants/events/client';
 
 import './styles/game.scss';
+import { ROOM_EVENT_TYPES } from '../constants/events/server';
 
 export default function Game() {
 
@@ -16,10 +16,15 @@ export default function Game() {
 	const [myPlayer, setMyPlayer] = useState(null);
 	const [opponent, setOpponent] = useState(null);
 	const [gameState, setGameState] = useState('');
+	const [turnColor, setTurnColor] = useState('white');
+
+	//const [myTime, setMyTime] = useState(900);
+	//const [opponentTime, setOpponentTime] = useState(900);
 
 	//useEffect(() => {
-	//	//if(myPlayer && opponent) return;
-	//	const interval = setInterval(() => getRoomDetails(), 2000);
+	//	if(gameState !== 'GAME_RUNNING') return;
+	//	if(!myPlayer.side === turnColor)
+	//	const interval = setInterval(() => getRoomDetails(), 1000);
 	//	return () => {
 	//		clearInterval(interval);
 	//	}
@@ -27,37 +32,45 @@ export default function Game() {
 
 	useEffect(() => {
 		if(socket === null) return;
-		//socket.emit('message', ({data: player, event: EVENTS.ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS}));
+		socket.emit('request', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS}));
 		socket.on('response', (data) => {
 			if(!data) return;
 			switch(data.res) {
 				case "SERVER_MOVE_SUCCESS":
-					console.log(data.data);
-					setBoardState(data.data);
+					console.log(data);
+					setBoardState(data.fen);
 					setMoves(data.history);
+					setGameState(data.currentState);
+					setTurnColor(data.color);
 					break;
 				case "SERVER_MOVE_ERROR":
 					console.log("not valid move!");
 					break;
-
-				case "RECEIVE_DETAILS_SUCCESS":
-					if(data.data.player_white.id === socket.id) {
-						setMyPlayer(data.data.player_white);
-						setOpponent(data.data.player_black);
+					
+				case 'JOIN_ROOM_SUCCESS':
+					setGameState(data.currentState);
+					if(data.white.id === socket.id) {
+						setMyPlayer(data.white);
+						setOpponent(data.black);
 					} else {
-						setMyPlayer(data.data.player_black);
-						setOpponent(data.data.player_white);
+						setMyPlayer(data.black);
+						setOpponent(data.white);
 					}
+					break;
 
-					setGameState(data.data.gameState);
-
+				case 'PLAYER_LEFT_ROOM':
+					setGameState(data.currentState);
+					setOpponent(null);
 					break;
 
 				default: 
-					return; 
+					break; 
 			}
 
-			return () => socket.off('response');
+			return () => {
+				socket.emit('message', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
+				socket.off('response')
+			};
 
 		}, [socket])
 
@@ -69,13 +82,10 @@ export default function Game() {
 
 	function handleInput(e) {
 		e.preventDefault();
-		socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value.toLowerCase()}));
+		if(gameState === "GAME_RUNNING") {
+			socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
+		}
 		e.target.reset();
-	}
-
-	function getRoomDetails() {
-		console.log("getting details!");
-		socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_REQUEST_ROOM_DETAILS}));
 	}
 
 	return (
@@ -87,7 +97,7 @@ export default function Game() {
 						<p>vs</p>
 						<p>{opponent ? opponent.name : 'Opponent'}</p>
 					</div>
-					<Chessground orientation={myPlayer ? myPlayer.side : 'white'} viewOnly="true" fen={boardState}/>
+					<Chessground orientation={myPlayer ? myPlayer.side : 'white'} viewOnly={true} fen={boardState}/>
 					<div style={{
 						marginTop: "30px",
 						display: "flex",
@@ -97,7 +107,7 @@ export default function Game() {
 						<p>Type your move: </p>
 						<form className="move-input" onSubmit={handleInput}>
 							<input className="move-input" type="text" ref={moveRef}/>
-							<input type="submit" hidden="true" onSubmit={handleInput}/>
+							<input type="submit" hidden={true} onSubmit={handleInput}/>
 						</form>
 					</div>
 				</div>
@@ -111,9 +121,13 @@ export default function Game() {
 
 				}}>
 						<div className="time-panel">
-							<div className="time">
+							{opponent ? 
+							<div className={turnColor === opponent.side ? 'time-active' : 'time'}>
 								<p>15:00</p>
-							</div>
+							</div> : 
+							<div className="time">
+								<p>10:00</p>
+							</div> }
 						</div>
 						<div className="player-panel">
 							<i className={opponent ? 'indicator-online' : 'indicator-offline'}></i>
@@ -131,17 +145,18 @@ export default function Game() {
 								))}
 							</ol>
 						</div>
-						<div className="bottom-button-container">
-							<button>S</button>
-						</div>
 						<div className="player-panel">
 							<i className={myPlayer ? 'indicator-online' : 'indicator-offline'}></i>
 							<p>{myPlayer ? myPlayer.name : ''}</p>
 						</div>
 						<div className="time-panel">
-							<div className="time">
+							{myPlayer ? 
+							<div className={turnColor === myPlayer.side ? 'time-active' : 'time'}>
 								<p>15:00</p>
-							</div>
+							</div> : 
+							<div className="time">
+								<p>10:00</p>
+							</div> }
 						</div>
 					</div>
 		</MainContainer>

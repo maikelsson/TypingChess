@@ -109,8 +109,22 @@
 	.time {
 		height: auto;
 		border-bottom: $primary-color;
+		border-radius: 5px;
 		background-color: $secondary-color;
 		font-size: 40px;
+
+		&-active {
+			height: auto;
+			border-bottom: $primary-color;
+			border-radius: 5px;
+			background-color: #2dc14f80;
+			font-size: 40px;
+
+			p {
+				margin: 0px 5px 0px 5px;
+
+			}
+		}
 
 		p {
 			margin: 0px 5px 0px 5px;

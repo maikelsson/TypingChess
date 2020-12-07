@@ -19,7 +19,6 @@ class RoomManager {
 		let room = this.findRoomById(roomId);
 		room.addPlayerToRoom(player);
 		player.roomId = room.id;
-		room.getGame().setupGame();
 	}
 
 	findRoomById(id) {

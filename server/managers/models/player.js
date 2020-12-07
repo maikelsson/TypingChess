@@ -4,6 +4,7 @@ class Player {
 		this.name = name;
 		this.id = socketId;
 		this.roomId = roomId;
+		this.side = 'white';
 	}
 
 	getPlayerCurrentRoomId() {

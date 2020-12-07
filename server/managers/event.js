@@ -16,7 +16,7 @@ class EventManager {
 	// this can be trimmed ?
 	onConnection(socket) {
 		if(!socket) return;
-		const defaultPlayer = new Player("", socket.id, "");
+		let defaultPlayer = new Player("", socket.id, "");
 		console.log("onConnection", defaultPlayer);
 		this.playerManager.players.push(defaultPlayer);
 		messageLogger("server" ,`New client connection ${defaultPlayer.id}`, "SUCCESS");
@@ -60,6 +60,9 @@ class EventManager {
 				player.roomId = "";
 				console.log("player leaved room", player);
 				return;
+			
+			case ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS:
+				
 
 			default:
 				return;
@@ -94,9 +97,7 @@ class EventManager {
 	onGame(socket, data, io) {
 		if(!socket || !data || !io) return;
 		let player = this.playerManager.findPlayerById(socket.id);
-		console.log(player);
 		let targetRoom = this.roomManager.findRoomById(player.roomId);
-		console.log(targetRoom);
 		if(!player || !targetRoom) {
 			messageLogger("EVENT", data.event, "error");
 			return;
@@ -114,6 +115,9 @@ class EventManager {
 					messageLogger("EVENT", `${data.event} move error!`, "WARNING")
 				}
 				break;
+
+			case GAME_EVENT_TYPES.PLAYER_REQUEST_ROOM_DETAILS:
+				io.in(player.roomId).emit('response', ({data: targetRoom.getGame(), res: "RECEIVE_DETAILS_SUCCESS"}));
 				
 			default:
 				return;

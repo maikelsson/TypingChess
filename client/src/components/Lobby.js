@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../context/authentication/AuthState'
 import {useSocket} from '../context/socket/SocketProvider';
-import { ROOM_EVENT_TYPES, GAME_EVENT_TYPES } from '../constants/events/server';
+import { ROOM_EVENT_TYPES } from '../constants/events/server';
 import { useHistory } from 'react-router-dom';
 
 import * as EVENTS from '../constants/events/server';
@@ -11,24 +11,6 @@ import "react-chessground/dist/styles/chessground.css";
 import './styles/lobby.scss';
 import MainContainer from './containers/MainContainer';
 
-const dummyRooms = [
-	{
-		name: 'player1_room',
-		players: [
-			'player1'
-		],
-		time: '10+0',
-		type: 'rapid'
-	},
-	{
-		name: 'matti878_room',
-		players: [
-			'matti878', "ratti"
-		],
-		time: '3+2',
-		type: 'blitz'
-	}
-]
 
 export default function Lobby() {
 
@@ -49,12 +31,9 @@ export default function Lobby() {
 				case EVENTS.RESPONSE_EVENT_TYPES.PLAYER_REQUEST_ROOMS_SUCCESS:
 					console.log(data.data);
 					setRooms(data.data);
-					return;
-				case "SERVER_MOVE_ERROR":
-					setError(data.data);
-					return;
+					break;
 				default:
-					return;
+					break;
 			}
 		});
 
@@ -91,7 +70,7 @@ export default function Lobby() {
 				<MainContainer>
 					<div className="board-container">
 						<div className="status-panel">
-							<p>asd</p>
+							<p>Lobby</p>
 						</div>
 						<Chessground resizeble={true} viewOnly={true} orientation="white"/>
 						
@@ -128,7 +107,7 @@ export default function Lobby() {
 									overflowY: "scroll"}}>
 										{rooms.map((r) => (
 											<>
-												{r.players.length < 2 
+												{r 
 												?	<li key={r.id}>
 														<p>{r.name}</p>
 														<p>{r.time}</p>

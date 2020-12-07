@@ -22,15 +22,12 @@ class Room {
 	addPlayerToRoom(player) {
 		player.roomId = this.id;
 		this.players.push(player);
-		if(this.game.player_white === null) {
-			this.game.player_white = player;
-		} else {
-			this.game.player_black = player;
-		}
+		this.game.assignPlayerSide(player);
 	}
 
 	removePlayerFromRoom(player) {
 		this.players = this.players.filter((p) => p.id !== player.id);
+		this.game.removePlayerFromGame(player);
 	}
 }
 

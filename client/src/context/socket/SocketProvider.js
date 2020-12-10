@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { AuthContext } from '../authentication/AuthState';
 import { useHistory } from 'react-router-dom';
 import * as EVENTS from '../../constants/events/server';
+import { CLIENT_CONNECTION, CLIENT_ROOM } from '../../constants/events/client';
 
 const SocketContext = createContext();
 
@@ -22,7 +23,7 @@ export function SocketProvider({children}) {
 
 		newSocket.on('connect', () => {
 			console.log("socket connected!");
-			newSocket.emit('message', ({event: EVENTS.CONNECTION_EVENT_TYPES.UPDATE_CONNECTION, data: authenticatedUser}));
+			newSocket.emit('message', ({event: CLIENT_CONNECTION.UPDATE, data: authenticatedUser}));
 		});
 
 		newSocket.on('response', (data) => {
@@ -33,7 +34,8 @@ export function SocketProvider({children}) {
 			if(reason === 'io server disconnect') {
 				newSocket.connect();
 			}
-			newSocket.emit('message', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
+			newSocket.emit('message', ({event: CLIENT_ROOM.LEAVE}))
+			newSocket.emit('message', ({event: CLIENT_CONNECTION.REMOVE}))
 			newSocket.close();
 			history.push('/login');
 		})

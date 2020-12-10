@@ -4,11 +4,16 @@ import { ROOM_EVENT_TYPES } from '../constants/events/server';
 import { useHistory } from 'react-router-dom';
 
 import * as EVENTS from '../constants/events/server';
+import { CLIENT_CONNECTION, CLIENT_ROOM, CLIENT_REQUEST } from '../constants/events/client';
+import { SERVER_ROOM_SUCCESS, SERVER_ROOM_ERROR, SERVER_REQUEST_SUCCESS, SERVER_REQUEST_ERROR } from '../constants/events/server';
+
+
 
 import Chessground from 'react-chessground';
 import "react-chessground/dist/styles/chessground.css";
 import './styles/lobby.scss';
 import MainContainer from './containers/MainContainer';
+import RoomList from './RoomList';
 
 
 export default function Lobby() {
@@ -17,19 +22,34 @@ export default function Lobby() {
 	const history = useHistory();
 	const [error, setError] = useState('');
 	const [activeTab, setActiveTab] = useState('newgame');
-	const [rooms, setRooms] = useState();
+	const [rooms, setRooms] = useState([]);
 
 	useEffect(() => {
 		if(socket === null) return;
-		socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
+		
+		socket.emit('request', ({event: CLIENT_REQUEST.ROOMS}))
+		
 		socket.on('response', (data) => {
 			if(!data) return;
-			console.log("got response");
 			switch(data.res) {
-				case EVENTS.RESPONSE_EVENT_TYPES.PLAYER_REQUEST_ROOMS_SUCCESS:
-					console.log(data.data);
+
+				case SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOMS:
 					setRooms(data.data);
 					break;
+
+				case SERVER_REQUEST_ERROR.CLIENT_REQUEST_ROOMS:
+					console.log("some error from requesting rooms");
+					break;
+
+				case SERVER_ROOM_SUCCESS.CLIENT_CREATE_ROOM:
+					console.log("created room succesfully and joining it!");
+					history.push("/play");
+					break;
+				
+				case SERVER_ROOM_ERROR.CLIENT_CREATE_ROOM:
+					console.log("error when creating a room!");
+					break;
+
 				default:
 					break;
 			}
@@ -37,18 +57,18 @@ export default function Lobby() {
 
 		return () => socket.off('response');
 
-	}, [socket]);
+	}, [socket, history]);
 
 	function requestRoomsFromServer() {
 		console.log("getting rooms");
 		setTimeout(() => {
-			socket.emit('request', ({event: EVENTS.REQUEST_EVENT_TYPES.PLAYER_REQUEST_ROOMS}))
+			socket.emit('request', ({event: CLIENT_REQUEST.ROOMS}))
 		}, 2000);
 	}
 
 	function handleJoinRoom(e, id) {
 		e.preventDefault();
-		socket.emit('request', ({event: ROOM_EVENT_TYPES.PLAYER_JOIN_ROOM, roomId: id}))
+		socket.emit('message', ({event: CLIENT_ROOM.JOIN, roomId: id}))
 		history.push("/play");
 	}
 
@@ -57,10 +77,16 @@ export default function Lobby() {
 		setActiveTab(e.target.name);
 	}
 
-	function handleCreateRoom(e) {
+	function handleCreateRoom(e, type, seconds, increment) {
 		e.preventDefault();
-		socket.emit('message', ({event: EVENTS.ROOM_EVENT_TYPES.PLAYER_CREATE_ROOM}));
-		history.push("/play");
+		
+		let timeModel = {
+			type: type,
+			seconds: seconds,
+			increment: increment
+		};
+
+		socket.emit('message', ({event: CLIENT_ROOM.CREATE, payload: timeModel}));
 	} 
 
 	return (
@@ -68,7 +94,29 @@ export default function Lobby() {
 				<MainContainer>
 					<div className="board-container">
 						<div className="status-panel">
-							<p>Lobby</p>
+							<div className="top-row">
+								<div className="logo">
+									TC
+								</div>
+								<div className="room-info">
+									15+15 • Casual • Classic <br/>
+          				Game Running
+								</div>
+							</div>
+							<div className="bottom-row">
+								<div className="player-white">
+									<div className="white-circle">
+
+									</div>
+									Player white (1400)
+								</div>
+								<div className="player-black">
+									<div className="black-circle">
+
+									</div>
+									Player black (1230)
+								</div>
+							</div>
 						</div>
 						<Chessground resizeble={true} viewOnly={true} orientation="white"/>
 						
@@ -81,44 +129,18 @@ export default function Lobby() {
 						</div>
 
 						<div name="newgame" className={activeTab === 'newgame' ? 'tab-content-active' : 'tab-content-disabled'}>
-							<h2>New game</h2>
-							<button className="create-new-btn" onClick={handleCreateRoom}>Create new</button>
+							<h2>Play Chess</h2>
+							<div className="button-container">
+								<button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Blitz', 180, 2)}>Blitz <span>(3 + 2)</span></button>
+								<button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Rapid', 600, 0)}>Rapid <span>(10 + 0)</span></button>
+								<button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Classic', 900, 15)}>Classic<span>(15+15)</span></button>
+							</div>
 						</div>
 
 						<div name="rooms" className={activeTab === 'rooms' ? 'tab-content-active' : 'tab-content-disabled'}>
 							{activeTab === 'rooms' ? requestRoomsFromServer() : null}
 							<h2>Rooms</h2>
-							<div className="room-list">
-								{rooms ? 
-								<>
-									<ul className="header">
-										<li key="rooms">
-											<p>name</p>
-											<p>time</p>
-											<p>type</p>
-											<p>action</p>
-										</li>
-									</ul>
-									<ul style={{
-									height: '380px',
-									overflow: "hidden",
-									overflowY: "scroll"}}>
-										{rooms.map((r) => (
-											<>
-												{r 
-												?	<li key={r.id}>
-														<p>{r.name}</p>
-														<p>{r.time}</p>
-														<p>{r.type}</p>
-														<button onClick={(e) => handleJoinRoom(e, r.id)}>Join</button>					
-													</li> 
-												: null}
-											</>))}
-										</ul>
-									</> 
-									: <p>Loading...</p>}
-							</div>
-							
+							<RoomList rooms={rooms} handleJoin={handleJoinRoom}></RoomList>
 						</div>
 						<div name="players" className={activeTab === 'players' ? 'tab-content-active' : 'tab-content-disabled'}>
 							<h2>Players</h2>

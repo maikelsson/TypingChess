@@ -20,31 +20,80 @@ $board-size: 50rem;
 }
 
 .status-panel {
-	min-height: 12%;
-	background-color: $secondary-color;
-	border-radius: 5px;
-	margin-bottom: 15px;
-	width: 100%;
 	display: flex;
-	flex-wrap: wrap;
-	font-size: 30px;
+	flex-direction: column;
+	height: 150px;
+	width: 100%;
+	background-color: #31363f;
+	border-radius: 5px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+	margin-bottom: 20px;
 
-	* {
-		margin: 0;
-		justify-content: start;
+	.top-row {
+		display: flex;
+		margin: 0 auto;
+		width: 100%;
+		height: auto;
 	}
 
-	h3 {
-		margin: 5px;
-		height: 25%;
+	.logo {
+		margin: 5px 0px;
+		color: #ffffff;
+		font-size: 3rem;
+		line-height: 3rem;
+		padding-left: 0.6rem;
+	}
+
+	.room-info {
+		font-style: normal;
+		font-weight: normal;
 		width: 100%;
-		margin-top: 5px;
+		display: flex;
+		align-items: center;
+		line-height: 14px;
+		margin: 14px 4px;
+		font-size: 0.8rem;
+	}
+
+	.bottom-row {
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+
+		padding: 0.6rem;
+	}
+
+	.white-circle {
+		border-radius: 50%;
+		width: 12px;
+		height: 12px;
+		background-color: #e1e1e1;
+		margin-right: 5px;
+	}
+
+	.black-circle {
+		border-radius: 50%;
+		width: 12px;
+		height: 12px;
+		border: 1px solid #e1e1e1;
+		margin-right: 5px;
+	}
+
+	.player-white,
+	.player-black {
+		font-size: 12px;
+		line-height: 12px;
+		display: flex;
+		align-items: center;
+		height: 35px;
+		padding: 0.4em 0em;
 	}
 }
 
 .board-container {
-	width: 50vw;
+	width: auto;
 	height: auto;
+	max-height: 70vw;
 	font-size: 20px;
 	color: $text-color;
 	display: flex;
@@ -53,6 +102,9 @@ $board-size: 50rem;
 	.cg-wrap {
 		width: 50vw;
 		height: 50vw;
+		max-width: 70vw;
+		max-height: 70vw;
+		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	}
 
 	div p {
@@ -95,9 +147,11 @@ $board-size: 50rem;
 	margin-left: 20px;
 	background-color: $secondary-color;
 	border-radius: 5px;
+	box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .tab {
+	padding: 0.25rem;
 	margin-top: 2px;
 	overflow: hidden;
 	background-color: $secondary-color;
@@ -105,7 +159,8 @@ $board-size: 50rem;
 	justify-content: center;
 
 	button {
-		font-size: 12px;
+		font-size: 0.8rem;
+		font-weight: bold;
 		height: 100%;
 		border-radius: 2px;
 		background-color: $primary-color;
@@ -116,6 +171,7 @@ $board-size: 50rem;
 		transition: 0.3s;
 		width: 33.1%;
 		color: $text-color;
+		padding: 0.9rem;
 
 		&:hover {
 			transition: 0.2s;
@@ -135,7 +191,9 @@ $board-size: 50rem;
 .tab-content-active {
 	padding: 6px 12px;
 	border-top: none;
+	align-items: center;
 	color: $text-color;
+	height: inherit;
 
 	h2 {
 		text-align: center;
@@ -189,16 +247,43 @@ $board-size: 50rem;
 		}
 	}
 
-	.create-new-btn {
-		color: $text-color;
+	.button-container {
+		display: flex;
+		justify-content: space-around;
+		align-items: center;
+		align-content: center;
 		margin: 0 auto;
-		display: block;
-		width: 80%;
-		height: 50%;
-		background-color: #2dc14f;
-		border-radius: 4px;
-		border: none;
-		outline: none;
-		padding: 14px 16px;
+		flex-direction: column;
+		min-height: 70%;
+
+		.create-new-btn {
+			color: $text-color;
+			font-size: 1rem;
+			margin: 0 auto;
+			//display: block;
+			width: 70%;
+			height: 4rem;
+			background-color: #2b3037;
+			border-radius: 4px;
+			border: none;
+			outline: none;
+			filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.48));
+			transition: 0.2s;
+
+			&:hover {
+				background-color: darken(#2b3037, 5%);
+			}
+
+			span,
+			* {
+				margin: 2px 2px;
+				display: flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				align-content: center;
+				font-size: 0.9rem;
+			}
+		}
 	}
 }

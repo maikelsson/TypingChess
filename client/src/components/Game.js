@@ -1,11 +1,11 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import Chessground from 'react-chessground';
 import { useSocket } from '../context/socket/SocketProvider';
 import MainContainer from './containers/MainContainer';
-import * as SERVER_EVENT from '../constants/events/server';
+import {SERVER_REQUEST_ERROR, SERVER_REQUEST_SUCCESS, SERVER_ROOM_ERROR, SERVER_ROOM_SUCCESS} from '../constants/events/server';
+import {CLIENT_GAME, CLIENT_REQUEST, CLIENT_ROOM} from '../constants/events/client';
 
 import './styles/game.scss';
-import { ROOM_EVENT_TYPES } from '../constants/events/server';
 
 export default function Game() {
 
@@ -14,51 +14,71 @@ export default function Game() {
 	const [moves, setMoves] = useState([]);
 	const moveRef = useRef();
 	const [myPlayer, setMyPlayer] = useState(null);
-	const [opponent, setOpponent] = useState(null);
+	const [opponent, setOpponent] = useState({});
 	const [gameState, setGameState] = useState('');
 	const [turnColor, setTurnColor] = useState('white');
+	
+	const [config, setConfig] = useState(null);
 
-	//const [myTime, setMyTime] = useState(900);
-	//const [opponentTime, setOpponentTime] = useState(900);
+	const [myTime, setMyTime] = useState();
+	const [opponentTime, setOpponentTime] = useState();
 
-	//useEffect(() => {
-	//	if(gameState !== 'GAME_RUNNING') return;
-	//	if(!myPlayer.side === turnColor)
-	//	const interval = setInterval(() => getRoomDetails(), 1000);
-	//	return () => {
-	//		clearInterval(interval);
-	//	}
-	//}, [])
+	const decrementTime = useCallback(() => {
+		if(turnColor === 'white') {
+			setMyTime(myTime - 1);
+			return;
+		}
+		setOpponentTime(opponentTime - 1);
+	}, [opponentTime, turnColor, myTime]);
+
+	const handleConfig = useCallback(() => {
+		if(!config) return;
+		setMyTime(config.seconds);
+		setOpponentTime(config.seconds);
+	}, [config])
+
+	useEffect(() => {
+		//if(gameState !== 'GAME_RUNNING') return;
+		//if(!myPlayer.side === turnColor)
+
+		const interval = setInterval(() => decrementTime(), 1000);
+		return () => {
+			clearInterval(interval);
+		}
+	}, [decrementTime])
 
 	useEffect(() => {
 		if(socket === null) return;
-		socket.emit('request', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_JOINED_ROOM_SUCCESS}));
+		//socket.emit('request', ({event: CLIENT_REQUEST.ROOM_INFO}));
+		socket.emit('request', ({event: CLIENT_REQUEST.ROOM_CONFIG}));
 		socket.on('response', (data) => {
 			if(!data) return;
 			switch(data.res) {
-				case "SERVER_MOVE_SUCCESS":
+				case SERVER_ROOM_SUCCESS.CLIENT_MOVE_PIECE:
 					console.log(data);
 					setBoardState(data.fen);
 					setMoves(data.history);
 					setGameState(data.currentState);
 					setTurnColor(data.color);
 					break;
-				case "SERVER_MOVE_ERROR":
+				case SERVER_ROOM_ERROR.CLIENT_MOVE_PIECE:
 					console.log("not valid move!");
 					break;
 					
-				case 'JOIN_ROOM_SUCCESS':
-					setGameState(data.currentState);
-					if(data.white.id === socket.id) {
-						setMyPlayer(data.white);
-						setOpponent(data.black);
-					} else {
-						setMyPlayer(data.black);
-						setOpponent(data.white);
-					}
+				case SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM:
+					handleGameData(data.data, socket.id);
 					break;
 
-				case 'PLAYER_LEFT_ROOM':
+				case SERVER_REQUEST_ERROR.CLIENT_REQUEST_ROOM:
+					console.log(data.data);
+					break;
+
+				case SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM_CONFIG:
+					console.log(data.payload);
+					setConfig(data.payload);
+					break;
+
+				case SERVER_ROOM_ERROR.CLIENT_LEAVE:
 					setGameState(data.currentState);
 					setOpponent(null);
 					break;
@@ -66,31 +86,48 @@ export default function Game() {
 				default: 
 					break; 
 			}
-
-			return () => {
-				socket.emit('message', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}))
-				socket.off('response')
-			};
-
-		}, [socket])
+		})
 
 		return () => {
-			socket.emit('message', ({event: SERVER_EVENT.ROOM_EVENT_TYPES.PLAYER_LEAVE_ROOM}));
+			socket.emit('message', ({event: CLIENT_ROOM.LEAVE}));
 			socket.off('response');
 		}
+
 	}, [socket])
+
+	useEffect(() => {
+		handleConfig();
+	}, [handleConfig])
+
+	function handleGameData(data, id) {
+		if(data.player_white.id === id) {
+			setMyPlayer(data.player_white);
+			//setOpponent(data.player_black);
+		} else {
+			setMyPlayer(data.player_black)
+			setOpponent(data.player_white);
+		} 
+	}
+
+	function swapTurn(e) {
+		e.preventDefault();
+		setTurnColor(turnColor === 'white' ? 'black' : 'white');
+		console.log("swapped!");
+	}
 
 	function handleInput(e) {
 		e.preventDefault();
-		if(gameState === "GAME_RUNNING") {
-			socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
+		if(gameState === "GAME_RUNNING" && myPlayer.side === turnColor) {
+			//socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
 		}
 		e.target.reset();
 	}
 
 	return (
 		<MainContainer>
+			
 			<div className="board-container">
+				
 					<div className="status-panel">
 						<h3>Game {gameState ? gameState : 'Waiting for opponent...'}</h3>
 						<p>{myPlayer ? myPlayer.name : ''}</p>
@@ -122,8 +159,8 @@ export default function Game() {
 				}}>
 						<div className="time-panel">
 							{opponent ? 
-							<div className={turnColor === opponent.side ? 'time-active' : 'time'}>
-								<p>15:00</p>
+							<div className={turnColor === 'black' ? 'time-active' : 'time'}>
+								<p>{opponentTime ? new Date(opponentTime * 1000).toISOString().substr(14, 5) : ''}</p>
 							</div> : 
 							<div className="time">
 								<p>10:00</p>
@@ -152,12 +189,13 @@ export default function Game() {
 						<div className="time-panel">
 							{myPlayer ? 
 							<div className={turnColor === myPlayer.side ? 'time-active' : 'time'}>
-								<p>15:00</p>
+								<p>{myTime ? new Date(myTime * 1000).toISOString().substr(14, 5) : ''}</p>
 							</div> : 
 							<div className="time">
 								<p>10:00</p>
 							</div> }
 						</div>
+						<button onClick={swapTurn}>Swap turn!</button>
 					</div>
 		</MainContainer>
 		

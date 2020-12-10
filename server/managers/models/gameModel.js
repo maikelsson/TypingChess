@@ -1,16 +1,26 @@
 const { Chess } = require('chess.js');
+const TimeModel = require('./timeModel');
+const EventEmitter = require('events');
 
-class Game {
-	constructor() {
+class Game extends EventEmitter {
+	constructor(id, timeModel) {
+		super();
+		this.gameId = id;
 		this.game = null;
 		this.player_white = null;
 		this.player_black = null;
-		this.gameState = GAME_STATE.NOT_RUNNING;
+		this.gameState = GAME_STATE.CAN_JOIN;
 		this.currentTurn = null; 
 		this.turnColor = 'white';
+
+		this.timeModel = new TimeModel(timeModel.type, timeModel.seconds, timeModel.increment);
+
+		this.on('newplayer', this.onNewPlayer);
+		this.on('removeplayer', this.onRemovePlayer);
+
 	}
 
-	assignPlayerSide(player) {
+	onNewPlayer(player) {
 		if(this.player_white && this.player_black) return;
 		if(!this.player_white) {
 			this.player_white = player;
@@ -24,7 +34,7 @@ class Game {
 		} 
 	}
 
-	removePlayerFromGame(player) {
+	onRemovePlayer(player) {
 		if(this.player_white === player) this.player_white = null;
 		else this.player_black = null;
 		this.gameState = GAME_STATE.PLAYER_LEFT;
@@ -102,7 +112,8 @@ const GAME_STATE = {
 	WHITE_WINNER: "WHITE_WINNER",
 	BLACK_WINNER: "BLACK_WINNER",
 	GAME_DRAWN: "GAME_DRAWN",
-	PLAYER_LEFT: "PLAYER_LEFT"
+	PLAYER_LEFT: "PLAYER_LEFT",
+	CAN_JOIN: "CAN_JOIN"
 }
 
 module.exports = Game;

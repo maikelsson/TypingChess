@@ -7,8 +7,12 @@ import {CLIENT_GAME, CLIENT_REQUEST, CLIENT_ROOM} from '../constants/events/clie
 
 import './styles/game.scss';
 
-export default function Game() {
+import GameStatusPanel from './GameStatusPanel';
+import MoveHistoryPanel from './MoveHistoryPanel';
+import MoveInput from './MoveInput';
+import PlayerContainer from './PlayerContainer';
 
+export default function Game() {
 	const socket = useSocket();
 	const [boardState, setBoardState] = useState('');
 	const [moves, setMoves] = useState([]);
@@ -120,81 +124,35 @@ export default function Game() {
 		if(gameState === "GAME_RUNNING" && myPlayer.side === turnColor) {
 			//socket.emit('game', ({event: SERVER_EVENT.GAME_EVENT_TYPES.PLAYER_MAKE_MOVE, move: moveRef.current.value}));
 		}
+		setMoves([...moves, moveRef.current.value])
+		console.log(moveRef.current.value);
 		e.target.reset();
 	}
 
 	return (
 		<MainContainer>
-			
+
 			<div className="board-container">
-				
-					<div className="status-panel">
-						<h3>Game {gameState ? gameState : 'Waiting for opponent...'}</h3>
-						<p>{myPlayer ? myPlayer.name : ''}</p>
-						<p>vs</p>
-						<p>{opponent ? opponent.name : 'Opponent'}</p>
-					</div>
+				<div className="content">
 					<Chessground orientation={myPlayer ? myPlayer.side : 'white'} viewOnly={true} fen={boardState}/>
-					<div style={{
-						marginTop: "30px",
-						display: "flex",
-						alignItems: 'center',
-						justifyContent: 'center',
-					}}>
-						<p>Type your move: </p>
-						<form className="move-input" onSubmit={handleInput}>
-							<input className="move-input" type="text" ref={moveRef}/>
-							<input type="submit" hidden={true} onSubmit={handleInput}/>
-						</form>
-					</div>
-				</div>
+				</div>		
+			</div>
 				<div className="side-panel" style={{
 					backgroundColor: "#24292E",
 					display: "flex",
 					flexDirection: "column",
 					justifyContent: "center",
 					alignContent: "center",
-					alignItems: "center"
-
+					alignItems: "center",
 				}}>
-						<div className="time-panel">
-							{opponent ? 
-							<div className={turnColor === 'black' ? 'time-active' : 'time'}>
-								<p>{opponentTime ? new Date(opponentTime * 1000).toISOString().substr(14, 5) : ''}</p>
-							</div> : 
-							<div className="time">
-								<p>10:00</p>
-							</div> }
-						</div>
-						<div className="player-panel">
-							<i className={opponent ? 'indicator-online' : 'indicator-offline'}></i>
-							<p>{opponent ? opponent.name : 'Opponent'}</p>
-						</div>
-						<div className="history-panel">
-							<h4>History:</h4>
-							<ol>
-								{moves.map((m, i) => 
-								(
-									<>
-										{i % 2 === 0 ? <li className="index">{i === 0 ? i + 1 : i / 2 + 1}.</li> : null}
-										<li key={i}>{m}</li>
-									</>
-								))}
-							</ol>
-						</div>
-						<div className="player-panel">
-							<i className={myPlayer ? 'indicator-online' : 'indicator-offline'}></i>
-							<p>{myPlayer ? myPlayer.name : ''}</p>
-						</div>
-						<div className="time-panel">
-							{myPlayer ? 
-							<div className={turnColor === myPlayer.side ? 'time-active' : 'time'}>
-								<p>{myTime ? new Date(myTime * 1000).toISOString().substr(14, 5) : ''}</p>
-							</div> : 
-							<div className="time">
-								<p>10:00</p>
-							</div> }
-						</div>
+					<GameStatusPanel roomConfig={config}/>
+					<PlayerContainer player={opponent} 
+												playerTime={opponentTime} 
+												turnColor={turnColor}
+												reverse={true}/>
+					<MoveHistoryPanel moves={moves}/>
+					<PlayerContainer player={myPlayer} playerTime={myTime} turnColor={turnColor} reverse={false}/>
+					<MoveInput handleMove={handleInput} moveRef={moveRef}/>
 						<button onClick={swapTurn}>Swap turn!</button>
 					</div>
 		</MainContainer>

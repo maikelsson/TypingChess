@@ -93,33 +93,9 @@ export default function Lobby() {
 			<>
 				<MainContainer>
 					<div className="board-container">
-						<div className="status-panel">
-							<div className="top-row">
-								<div className="logo">
-									TC
-								</div>
-								<div className="room-info">
-									15+15 • Casual • Classic <br/>
-          				Game Running
-								</div>
-							</div>
-							<div className="bottom-row">
-								<div className="player-white">
-									<div className="white-circle">
-
-									</div>
-									Player white (1400)
-								</div>
-								<div className="player-black">
-									<div className="black-circle">
-
-									</div>
-									Player black (1230)
-								</div>
-							</div>
+						<div className="content">
+							<Chessground resizeble={true} viewOnly={true} orientation="white"/>
 						</div>
-						<Chessground resizeble={true} viewOnly={true} orientation="white"/>
-						
 					</div>
 					<div className="side-panel">
 						<div className="tab">

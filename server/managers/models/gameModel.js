@@ -16,7 +16,8 @@ class Game extends EventEmitter {
 		this.timeModel = new TimeModel(timeModel.type, timeModel.seconds, timeModel.increment);
 
 		this.on('newplayer', this.onNewPlayer);
-		this.on('removeplayer', this.onRemovePlayer);
+    this.on('removeplayer', this.onRemovePlayer);
+    this.on('playerMakeMove', this.onPlayerMove);
 
 	}
 
@@ -45,7 +46,7 @@ class Game extends EventEmitter {
 		this.game = null;
 	}
 
-	validateMove(move, player) {
+	onPlayerMove(move, player) {
 		if(this.gameState === GAME_STATE.NOT_RUNNING) return;
 		let validMoves = this.game.moves()
 		let isValid = validMoves.includes(move);

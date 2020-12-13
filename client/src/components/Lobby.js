@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {useSocket} from '../context/socket/SocketProvider';
-import { ROOM_EVENT_TYPES } from '../constants/events/server';
 import { useHistory } from 'react-router-dom';
 
-import * as EVENTS from '../constants/events/server';
-import { CLIENT_CONNECTION, CLIENT_ROOM, CLIENT_REQUEST } from '../constants/events/client';
+import {CLIENT_ROOM, CLIENT_REQUEST } from '../constants/events/client';
 import { SERVER_ROOM_SUCCESS, SERVER_ROOM_ERROR, SERVER_REQUEST_SUCCESS, SERVER_REQUEST_ERROR } from '../constants/events/server';
 
 
@@ -47,7 +45,7 @@ export default function Lobby() {
 					break;
 				
 				case SERVER_ROOM_ERROR.CLIENT_CREATE_ROOM:
-					console.log("error when creating a room!");
+					console.log("error when creating a room!"); // handle errors!
 					break;
 
 				default:

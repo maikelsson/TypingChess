@@ -10,13 +10,15 @@ const ROOM = {
 }
 
 const GAME = {
-	MOVE_PIECE: "MOVE_PIECE"
+  MOVE_PIECE: "MOVE_PIECE",
+  READY: "READY"
 }
 
 const REQUEST = {
 	ROOMS: "ROOMS",
 	ROOM_INFO: "ROOM_INFO",
 	ROOM_CONFIG: "ROOM_CONFIG",
+	ROOM_PLAYERS: "ROOM_PLAYERS",
 }
 
 module.exports = {

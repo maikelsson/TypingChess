@@ -100,20 +100,17 @@ class EventManager {
 				}
 				break;
 
-			case CLIENT_REQUEST.ROOM_INFO:
-				if(player.roomId === "") return;
+			case CLIENT_REQUEST.ROOM_PLAYERS:
 				try {
+					let data = targetRoom.getGamePlayersAndState();
 					io.in(player.roomId).emit('response', ({
-						data: targetRoom.getGame(),
-						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM}))
-				} catch (error) {
-					console.log("error getting room info!", error);
-					socket.emit('response', ({
-						data: "Error getting room info!",
-						res: SERVER_REQUEST_ERROR.CLIENT_REQUEST_ROOM
-					}))
+						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM_PLAYERS,
+						payload: data
+					}));
+					messageLogger("server", "Client requested room players successfully", "success");
+				} catch(err) {
+					console.error("error request room players!");
 				}
-				
 				break;
 			
 			case CLIENT_REQUEST.ROOM_CONFIG:
@@ -142,26 +139,29 @@ class EventManager {
 		}
 
 		switch(data.event) {
-			case GAME_EVENT_TYPES.PLAYER_MAKE_MOVE:
+			case CLIENT_GAME.MOVE_PIECE:
 				try {
-					targetRoom.game.validateMove(data.move, player);
+          targetRoom.playerMakeMove(data.move, player);
+          let payload = targetRoom.getGameStatus();
+          console.log(payload);
 					io.in(player.roomId).emit('response', ({
-						fen: targetRoom.game.getBoardFen(),
-						history: targetRoom.game.getHistory(),
-						currentState: targetRoom.game.getGameState(),
-						color: targetRoom.game.getTurnColor(),
-						res: "SERVER_MOVE_SUCCESS"}))
+						payload: payload,
+						res: SERVER_ROOM_SUCCESS.CLIENT_MOVE_PIECE}))
 
 					messageLogger("EVENT", data.event, "SUCCESS");
 
 				} catch (error) {
-					socket.emit('response', ({data: error.message, res: "SERVER_MOVE_ERROR"}))
+					socket.emit('response', ({data: error, res: SERVER_ROOM_ERROR.CLIENT_MOVE_PIECE}))
 					messageLogger("EVENT", `${data.event} move error!`, "WARNING")
 				}
-				break;
-
-			case GAME_EVENT_TYPES.PLAYER_REQUEST_ROOM_DETAILS:
-				io.in(player.roomId).emit('response', ({data: targetRoom.getGame(), res: "RECEIVE_DETAILS_SUCCESS"}));
+        break;
+        
+      case CLIENT_GAME.READY:
+        try {
+          return;
+        } catch (error) {
+          return;
+        }
 				
 			default:
 				return;

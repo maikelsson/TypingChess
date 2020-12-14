@@ -2,7 +2,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { AuthContext } from '../authentication/AuthState';
 import { useHistory } from 'react-router-dom';
-import * as EVENTS from '../../constants/events/server';
 import { CLIENT_CONNECTION, CLIENT_ROOM } from '../../constants/events/client';
 
 const SocketContext = createContext();

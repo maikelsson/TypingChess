@@ -19,7 +19,6 @@ export default function CustomNavbar() {
 				<li><h2>TypeChess</h2></li>
 				<li><Link to="/home">Home</Link></li>
 				<li><Link to="/lobby">Play</Link></li>
-				<li><Link disabled to="/play">Game</Link></li>
 				<li><button onClick={handleLogout}>LogOut</button></li>
 			</ul>
 		</div>

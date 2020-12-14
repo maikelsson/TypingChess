@@ -42,6 +42,37 @@
 	}
 }
 
+.game-over-modal {
+	display: flex;
+	position: absolute;
+	z-index: 3;
+	height: inherit;
+	width: inherit;
+	justify-content: center;
+	align-items: center;
+	background-color: #00000050;
+
+	.content {
+		width: 50%;
+		position: absolute;
+		background-color: $secondary-color;
+		opacity: 1;
+		height: 30%;
+		display: flex;
+		justify-content: center;
+		flex-direction: column;
+		align-items: center;
+		align-content: center;
+		border-radius: 5px;
+		box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.5);
+	}
+
+	h2,
+	h5 {
+		margin: 5px 0px;
+	}
+}
+
 .game-status-panel {
 	display: flex;
 	flex-direction: column;

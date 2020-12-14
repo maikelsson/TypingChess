@@ -11,6 +11,7 @@ import GameStatusPanel from './GameStatusPanel';
 import MoveHistoryPanel from './MoveHistoryPanel';
 import MoveInput from './MoveInput';
 import PlayerContainer from './PlayerContainer';
+import GameOverModal from './GameOverModal';
 
 export default function Game() {
   const socket = useSocket();
@@ -134,23 +135,24 @@ export default function Game() {
     <MainContainer>
       <div className="board-container">
         <div className="content">
+          <GameOverModal display={true} onLeave={() => {}}/>
           <Chessground orientation={myPlayer ? myPlayer.side : 'white'} viewOnly={true} fen={boardState}/>
         </div>		
       </div>
-        <div className="game-side-panel">
-          <GameStatusPanel roomConfig={config} 
-                            myPlayer={myPlayer}
-                            opponent={opponent}
-                            gameState={gameState}/>
-          <PlayerContainer player={opponent} 
-                        playerTime={opponentTime} 
-                        turnColor={turnColor}
-                        reverse={true}/>
-          <MoveHistoryPanel moves={moves}/>
-          <PlayerContainer player={myPlayer} playerTime={myTime} turnColor={turnColor} reverse={false}/>
-          <MoveInput handleMove={handleInput} moveRef={moveRef}/>
-          <button onClick={swapTurn}>Swap turn!</button>
-        </div>
+      <div className="game-side-panel">
+        <GameStatusPanel roomConfig={config} 
+                          myPlayer={myPlayer}
+                          opponent={opponent}
+                          gameState={gameState}/>
+        <PlayerContainer player={opponent} 
+                      playerTime={opponentTime} 
+                      turnColor={turnColor}
+                      reverse={true}/>
+        <MoveHistoryPanel moves={moves}/>
+        <PlayerContainer player={myPlayer} playerTime={myTime} turnColor={turnColor} reverse={false}/>
+        <MoveInput handleMove={handleInput} moveRef={moveRef}/>
+        <button onClick={swapTurn}>Swap turn!</button>
+      </div>
     </MainContainer>
     
   )

@@ -4,6 +4,7 @@ import { PrivateRoute } from './components/shared/PrivateRoute';
 import { AuthProvider } from './context/authentication/AuthState';
 
 import { SocketProvider } from './context/socket/SocketProvider';
+import { LobbyProvider} from './components/lobby/context/LobbyProvider';
 
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
@@ -22,7 +23,9 @@ function App() {
 							<SocketProvider>
 								<PrivateRoute path="/home" component={Home} /> 
 								<PrivateRoute exact path="/" component={Home} />
-								<PrivateRoute path="/lobby" component={Lobby}/>
+                <LobbyProvider>
+								  <PrivateRoute path="/lobby" component={Lobby}/>
+                </LobbyProvider>
 								<PrivateRoute exact path="/play" component={Game} />
 							</SocketProvider>
 							<Route path="/" component={Home} />

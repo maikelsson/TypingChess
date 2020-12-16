@@ -92,7 +92,7 @@ class EventManager {
 				try {
 					let availableRooms = this.roomManager.getAvailableRooms();
 					socket.emit('response', ({
-						data: availableRooms, 
+						payload: availableRooms, 
 						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOMS}));
 					
 				} catch (error) {

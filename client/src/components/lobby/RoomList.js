@@ -1,9 +1,14 @@
 import React from 'react'
 
+import { LobbyContext } from './context/LobbyProvider';
+
 export default function RoomList({rooms, handleJoin}) {
+
+  const { games } = React.useContext(LobbyContext);
+
 	return (
 		<div className="room-list">
-			{rooms ? 
+			{games ? 
 			<>
 				<ul className="header">
 					<li key="rooms">
@@ -17,14 +22,14 @@ export default function RoomList({rooms, handleJoin}) {
 				height: '380px',
 				overflow: "hidden",
 				overflowY: "scroll"}}>
-					{rooms.map((r) => (
+					{games.map((g) => (
 						<>
-							{r
-							?	<li key={r.id}>
-									<p>{r.name}</p>
-									<p>{r.time}</p>
-									<p>{r.type}</p>
-									<button onClick={(e) => handleJoin(e, r.id)}>Join</button>					
+							{g
+							?	<li key={g.id}>
+									<p>{g.name}</p>
+									<p>{g.time}</p>
+									<p>{g.type}</p>
+									<button onClick={(e) => handleJoin(e, g.id)}>Join</button>					
 								</li> 
 							: <p>No rooms available..</p>}
 						</>))}

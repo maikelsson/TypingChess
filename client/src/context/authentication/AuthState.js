@@ -10,7 +10,7 @@ const authenticationState = {
 
 export const AuthContext = createContext(authenticationState);
 
-export const AuthProvider = ( {children} ) => {
+export const AuthProvider = ({ children }) => {
 	const [state, dispatch] = useReducer(AuthReducer, authenticationState);
 
 	async function register(name, password, confirmPassword) {

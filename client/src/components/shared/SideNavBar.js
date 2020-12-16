@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/authentication/AuthState';
+import { AuthContext } from '../../context/authentication/AuthState';
 
-import './styles/main.scss';
+import '../main.scss';
 
 export default function CustomNavbar() {
 

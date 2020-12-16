@@ -1,5 +1,5 @@
 import React from 'react';
-import SideNavBar from '../SideNavBar';
+import SideNavBar from '../shared/SideNavBar';
 
 export default function MainContainer({children}) {
 	return (

@@ -1,9 +1,9 @@
 import React, { useState, useContext, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import { AuthContext } from '../context/authentication/AuthState';
-import AuthContainer from './containers/AuthContainer';
+import { AuthContext } from '../../context/authentication/AuthState';
+import AuthContainer from '../containers/AuthContainer';
 
-import './styles/auth.scss';
+import './auth.scss'
 
 export default function Register() {
 	const nameRef = useRef();

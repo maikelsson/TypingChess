@@ -32,7 +32,8 @@ export function SocketProvider({children}) {
 		newSocket.on('disconnect', (reason) => {
 			if(reason === 'io server disconnect') {
 				newSocket.connect();
-			}
+      }
+      
 			newSocket.emit('message', ({event: CLIENT_ROOM.LEAVE}))
 			newSocket.emit('message', ({event: CLIENT_CONNECTION.REMOVE}))
 			newSocket.close();

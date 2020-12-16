@@ -1,10 +1,9 @@
 import React, { useState, useContext, useRef } from 'react';
 import { useHistory, Link } from 'react-router-dom';
-import { AuthContext } from '../context/authentication/AuthState';
+import { AuthContext } from '../../context/authentication/AuthState';
 
-import './styles/auth.scss'
-import './styles/alerts.scss'
-import AuthContainer from './containers/AuthContainer';
+import './auth.scss'
+import AuthContainer from '../containers/AuthContainer';
 
 export default function Login() {
 	const passwordRef = useRef();
@@ -14,6 +13,12 @@ export default function Login() {
 
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('')
+
+  React.useEffect(() => {
+    return () => {
+      return;
+    }
+  })
 
 	async function handleSubmit(e) {
 		e.preventDefault();

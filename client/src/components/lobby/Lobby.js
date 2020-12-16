@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {useSocket} from '../context/socket/SocketProvider';
+import {useSocket} from '../../context/socket/SocketProvider';
 import { useHistory } from 'react-router-dom';
 
-import {CLIENT_ROOM, CLIENT_REQUEST } from '../constants/events/client';
-import { SERVER_ROOM_SUCCESS, SERVER_ROOM_ERROR, SERVER_REQUEST_SUCCESS, SERVER_REQUEST_ERROR } from '../constants/events/server';
+import {CLIENT_ROOM, CLIENT_REQUEST } from '../../constants/events/client';
+import { SERVER_ROOM_SUCCESS, SERVER_ROOM_ERROR, SERVER_REQUEST_SUCCESS, SERVER_REQUEST_ERROR } from '../../constants/events/server';
 
 
 
 import Chessground from 'react-chessground';
 import "react-chessground/dist/styles/chessground.css";
-import './styles/lobby.scss';
-import MainContainer from './containers/MainContainer';
+
+import MainContainer from '../containers/MainContainer';
 import RoomList from './RoomList';
 
+import './lobby.scss';
 
 export default function Lobby() {
 

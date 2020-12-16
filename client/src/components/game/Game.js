@@ -1,17 +1,20 @@
 import React, {useState, useRef, useEffect, useCallback} from 'react';
 import Chessground from 'react-chessground';
-import { useSocket } from '../context/socket/SocketProvider';
-import MainContainer from './containers/MainContainer';
-import {SERVER_REQUEST_ERROR, SERVER_REQUEST_SUCCESS, SERVER_ROOM_ERROR, SERVER_ROOM_SUCCESS} from '../constants/events/server';
-import {CLIENT_GAME, CLIENT_REQUEST, CLIENT_ROOM} from '../constants/events/client';
+import { useSocket } from '../../context/socket/SocketProvider';
+import MainContainer from '../containers/MainContainer';
+import {SERVER_REQUEST_ERROR, SERVER_REQUEST_SUCCESS, SERVER_ROOM_ERROR, SERVER_ROOM_SUCCESS} from '../../constants/events/server';
+import {CLIENT_GAME, CLIENT_REQUEST, CLIENT_ROOM} from '../../constants/events/client';
 
-import './styles/game.scss';
+import './game.scss';
 
 import GameStatusPanel from './GameStatusPanel';
 import MoveHistoryPanel from './MoveHistoryPanel';
 import MoveInput from './MoveInput';
 import PlayerContainer from './PlayerContainer';
 import GameOverModal from './GameOverModal';
+
+// TODO 
+// create game context so the children components can use data without "prop drilling"
 
 export default function Game() {
   const socket = useSocket();

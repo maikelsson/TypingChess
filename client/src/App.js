@@ -1,16 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { PrivateRoute } from './components/PrivateRoute';  
-import { GlobalProvider } from './context/GlobalState';
+import { PrivateRoute } from './components/shared/PrivateRoute';  
 import { AuthProvider } from './context/authentication/AuthState';
 
 import { SocketProvider } from './context/socket/SocketProvider';
 
-import Login from './components/Login';
-import Register from './components/Register';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
 import Home from './components/Home';
-import Lobby from './components/Lobby';
-import Game from './components/Game';
+import Lobby from './components/lobby/Lobby';
+import Game from './components/game/Game';
 
 function App() {
   	return (

@@ -1,4 +1,4 @@
-@import "./colors";
+@import "../shared/colors";
 
 .game-side-panel {
 	width: 40%;
@@ -228,10 +228,11 @@
 			background-color: $secondary-color;
 			display: flex;
 			align-items: center;
-			justify-content: start;
+			justify-content: flex-start;
 			text-align: start;
 			width: 36%;
 
+      
 			&.index {
 				padding: 0.3em;
 				text-align: center;

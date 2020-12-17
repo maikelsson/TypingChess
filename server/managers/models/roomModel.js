@@ -6,14 +6,14 @@ const { messageLogger } = require('../../utils/logger');
 class Room extends EventEmitter {
 	constructor(timeModel) {
 		super();
-		this.name = "";
+    this.name = "";
 		this.id = uuidv4();		
 		this.game = new Game(this.id, timeModel);		
 		this.players = [];
     this.canJoin = this.players.length < 2 ? true : false;
     this.type = timeModel.type;
     this.time = `(${timeModel.seconds / 60} + ${timeModel.increment})`;
-
+    
 		this.on('playerCreateRoom', this.onPlayerCreateRoom);
 		this.on('playerJoinRoom', this.onPlayerJoinRoom);
     this.on('playerLeaveRoom', this.onPlayerLeaveRoom);
@@ -22,21 +22,21 @@ class Room extends EventEmitter {
 
 	onPlayerCreateRoom(player, socket) {
 		this.name = `${player.name}'s room`;
-		this.onPlayerJoinRoom(player, socket);
 	}
 
-	onPlayerJoinRoom(player, socket) {
+	onPlayerJoinRoom(player, roomId, socket) {
 		if(this.canJoin) {
 			this.players.push(player);
 			this.game.emit('newplayer', player);
-			player.emit("joinRoom", this.id, socket);
+      player.emit("joinRoom", roomId, socket);
 		} else {
 			if(this.players.length > 1) {
 				return new Error("Room full, can't join!");
 			} else {
 				return new Error("Error from room!");
 			}
-		}
+    }
+  
 	}
 
 	onPlayerLeaveRoom(player, socket) {
@@ -59,7 +59,7 @@ class Room extends EventEmitter {
       fen: this.game.getBoardFen(),
       history: this.game.getHistory(),
       state: this.game.getGameState(),
-      currentTurn: this.game.getTurnColor()
+      turnColor: this.game.getTurnColor()
     }
     return status;
   }

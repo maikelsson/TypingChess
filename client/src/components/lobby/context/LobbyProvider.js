@@ -1,8 +1,8 @@
-import React, { useState, createContext, useEffect, useReducer } from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
 import { useSocket } from '../../../context/socket/SocketProvider';
 import LobbyReducer from './LobbyReducer';
 
-import {CLIENT_ROOM, CLIENT_REQUEST } from '../../../constants/events/client';
+import * as e from '../../../constants/events/client';
 
 const lobbyState = {
   games: [],
@@ -37,16 +37,18 @@ export const LobbyProvider = ({ children }) => {
     if(state.isLoading) return;
     console.log("getGames!");
     
-		socket.emit('request', ({event: CLIENT_REQUEST.ROOMS}))
+		socket.emit('request', ({event: e.CLIENT_REQUEST.ROOMS}))
   }
 
   const joinGame = (id) => {
     console.log("joining game!", id);
+    socket.emit("message", ({event: e.CLIENT_ROOM.JOIN, payload: id}))
     return;
   }
 
   const createGame = (timeModel) => {
     console.log("creating game", timeModel);
+    socket.emit('message', ({event: e.CLIENT_ROOM.CREATE, payload: timeModel}));
     return;
   }
 

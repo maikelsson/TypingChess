@@ -34,7 +34,7 @@ class EventManager {
 			case CLIENT_ROOM.CREATE:
 				if(socketPlayer.roomId !== "") return; // leave room functionality
 				try{
-					this.roomManager.playerCreateRoomRequest(socketPlayer, socket, data.payload);
+					this.roomManager.playerCreateRoomRequest(socketPlayer, socket, data.payload, io);
 					socket.emit('response', ({res: SERVER_ROOM_SUCCESS.CLIENT_CREATE_ROOM}))
 				} catch (error) {
 					messageLogger("server", "error when creating a room!", "danger");
@@ -60,11 +60,7 @@ class EventManager {
 			
 			case CLIENT_ROOM.JOIN:
 				try {
-					this.roomManager.playerRequestJoinRoom(socketPlayer, data.roomId, socket);
-					let targetRoom = this.roomManager.findRoomById(data.roomId);
-					io.in(socketPlayer.roomId).emit('response', ({
-						data: targetRoom.getGame(), 
-						res: SERVER_ROOM_SUCCESS.CLIENT_JOINED_ROOM}))
+					this.roomManager.playerRequestJoinRoom(socketPlayer, data.payload, socket);
 					messageLogger(data.event, "JOIN SUCCESS!", "SUCCESS");
 				} catch (error) {
 					messageLogger(data.event, error.message, "DANGER");
@@ -115,7 +111,8 @@ class EventManager {
 			
 			case CLIENT_REQUEST.ROOM_CONFIG:
 				try {
-					let data = targetRoom.getGameConfig();
+          let data = targetRoom.getGameConfig();
+          console.log(data);
 					socket.emit('response', ({
 						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM_CONFIG, 
 						payload: data}))

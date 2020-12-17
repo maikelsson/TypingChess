@@ -1,9 +1,14 @@
-import React from 'react'
+import React, {useContext, useEffect} from 'react'
 
-export default function GameStatusPanel({roomConfig, myPlayer, opponent, gameState}) {
+import { GameContext } from './context/GameProvider';
+
+export default function GameStatusPanel({ myPlayer, opponent, gameState }) {
+
+  const { config } = useContext(GameContext);
+
 	return (
 		<>
-			{roomConfig ? 
+			{config ? 
 			<>
 				<div className="game-status-panel">
 					<div className="top-row">
@@ -11,7 +16,7 @@ export default function GameStatusPanel({roomConfig, myPlayer, opponent, gameSta
 							TC
 						</div>
 						<div className="room-info">
-							{roomConfig.seconds / 60}+{roomConfig.increment} • Casual • {roomConfig.gameType} <br/>
+							{config.seconds / 60}+{config.increment} • Casual • {config.gameType} <br/>
 							{gameState}
 						</div>
 					</div>

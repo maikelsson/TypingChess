@@ -3,10 +3,10 @@ const TimeModel = require('./timeModel');
 const EventEmitter = require('events');
 
 class Game extends EventEmitter {
-	constructor(id, timeModel) {
+	constructor(id, timeModel, io) {
 		super();
 		this.gameId = id;
-		this.game = null;
+    this.game = null;
 		this.player_white = null;
 		this.player_black = null;
 		this.gameState = GAME_STATE.CAN_JOIN;
@@ -25,14 +25,15 @@ class Game extends EventEmitter {
 		if(this.player_white && this.player_black) return;
 		if(!this.player_white) {
 			this.player_white = player;
-			player.side = 'white';
+      player.side = 'white';
 			if(this.player_black) this.setupGame();
 		}
 		else {
 			player.side = 'black';
 			this.player_black = player;
 			this.setupGame();
-		} 
+    }
+    
 	}
 
 	onRemovePlayer(player) {

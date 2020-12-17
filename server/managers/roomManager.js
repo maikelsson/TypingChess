@@ -1,33 +1,33 @@
 const Room = require('./models/roomModel');
-const EventEmitter = require('events');
 const { messageLogger } = require('../utils/logger');
 
-
-class RoomManager extends EventEmitter{
+class RoomManager {
 	constructor() {
-		super();
-		this.rooms = []
+    this.rooms = []
 	}
 
-	playerCreateRoomRequest(player, socket, timeModel) {
+	playerCreateRoomRequest(player, socket, timeModel, io) {
 		if(!player) return;
 		try {
 			let room = new Room(timeModel);
 			room.emit('playerCreateRoom', player, socket);
 			this.rooms.push(room);
-			messageLogger("server", "Created new room!", "success");
+      messageLogger("server", "Created new room!", "success");
+      this.playerRequestJoinRoom(player, room.id, socket, io);
 		} catch (error) {
 			messageLogger("server", error, "warning");
 			return error;
-		}
-		
+    }
 	}
 
-	playerRequestJoinRoom(player, roomId, socket) {
+	playerRequestJoinRoom(player, roomId, socket, io) {
 		try {
 			let room = this.findRoomById(roomId);
-			room.emit('playerJoinRoom', player, socket);
-			messageLogger("server", "player joined room!", "success")
+			room.emit('playerJoinRoom', player, roomId, socket);
+      messageLogger("server", "player joined room!", "success")
+      let data = room.getGameConfig();
+      io.in(room.id).emit('response', ({res: "SERVER_CONFIG", payload: data}))
+
 		} catch (error) {
 			return messageLogger("server", error, "danger");
 		}
@@ -41,10 +41,16 @@ class RoomManager extends EventEmitter{
 		try {
 			let room = this.findRoomById(player.roomId);
 			room.emit('playerLeaveRoom', player, socket);
-			if(room.players.length === 0) return this.removeRoomByRoomId(room.id);
+      if(room.players.length === 0) return this.removeRoomByRoomId(room.id);
+      io.in(room.id).emit('response', ({
+        currentState: "PLAYER_LEFT", 
+        res: SERVER_ROOM_SUCCESS.CLIENT_LEFT_ROOM
+      }));
 		} catch (error) {
 			return messageLogger("server", error, "warning");
-		}
+    }
+    
+    
 
 	}
 

@@ -21,12 +21,18 @@ export default function Lobby() {
 		history.push("/play");
 	}
 
+  function requestGamesWithTimeOut(millSecs) {
+    setTimeout(() => {
+      getGames();
+    }, millSecs);
+  }
+
 	function handleTabClick(e) {
 		e.preventDefault();
 		setActiveTab(e.target.name);
 	}
 
-	function handleCreateRoom(e, type, seconds, increment) {
+	function handleCreateGame(e, type, seconds, increment) {
 		e.preventDefault();
 		
 		let timeModel = {
@@ -36,7 +42,7 @@ export default function Lobby() {
 		};
 
     createGame(timeModel);
-    
+    history.push("/play");
 	} 
 
 	return (
@@ -57,14 +63,14 @@ export default function Lobby() {
                 <div name="newgame" className={activeTab === 'newgame' ? 'tab-content-active' : 'tab-content-disabled'}>
                   <h2>Play Chess</h2>
                   <div className="button-container">
-                    <button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Blitz', 180, 2)}>Blitz <span>(3 + 2)</span></button>
-                    <button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Rapid', 600, 0)}>Rapid <span>(10 + 0)</span></button>
-                    <button className="create-new-btn" onClick={(e) => handleCreateRoom(e, 'Classic', 900, 15)}>Classic<span>(15+15)</span></button>
+                    <button className="create-new-btn" onClick={(e) => handleCreateGame(e, 'Blitz', 180, 2)}>Blitz <span>(3 + 2)</span></button>
+                    <button className="create-new-btn" onClick={(e) => handleCreateGame(e, 'Rapid', 600, 0)}>Rapid <span>(10 + 0)</span></button>
+                    <button className="create-new-btn" onClick={(e) => handleCreateGame(e, 'Classic', 900, 15)}>Classic<span>(15+15)</span></button>
                   </div>
                 </div>
 
                 <div name="rooms" className={activeTab === 'rooms' ? 'tab-content-active' : 'tab-content-disabled'}>
-                  {activeTab === 'rooms' ? getGames() : null}
+                  {activeTab === 'rooms' ? requestGamesWithTimeOut(1500) : null}
                   <h2>Rooms</h2>
                   <RoomList handleJoin={handleJoinGame}></RoomList>
                 </div>

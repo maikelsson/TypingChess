@@ -1,17 +1,27 @@
-import React from 'react'
+import React, {useContext} from 'react'
 
-export default function MoveHistoryPanel(props) {
+import { GameContext } from './context/GameProvider'
+
+export default function MoveHistoryPanel() {
+
+  const { moveHistory, hasGameStarted } = useContext(GameContext);
+
 	return (
 		<div className="history-panel">
 			<h4>History:</h4>
 				<ol>
-					{props.moves.map((m, i) => 
-					(
-						<>
-							{i % 2 === 0 ? <li key={i + 10} className="index">{i === 0 ? i + 1 : i / 2 + 1}.</li> : null}
-							<li key={i}>{m}</li>
-						</>
-					))}
+          { hasGameStarted ?
+          <>
+            {moveHistory.map((m, i) => 
+            (
+              <>
+                {i % 2 === 0 ? <li key={i + 10} className="index">{i === 0 ? i + 1 : i / 2 + 1}.</li> : null}
+                <li key={i}>{m}</li>
+              </>
+            ))} 
+          </>
+            : <p style={{ marginLeft: '4px', fontSize: '1rem'}}>Game not yet started...</p>
+          }
 				</ol>
 		</div>
 	)

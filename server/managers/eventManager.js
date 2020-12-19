@@ -110,6 +110,7 @@ class EventManager {
 		}
 
 		switch(data.event) {
+      
       case CLIENT_GAME.MOVE_PIECE:
 				try {
           targetRoom.playerMakeMove(data.move, player);

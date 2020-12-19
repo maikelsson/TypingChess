@@ -4,7 +4,7 @@ import { GameContext } from './context/GameProvider';
 
 export default function GameStatusPanel() {
 
-  const { config } = useContext(GameContext);
+  const { config, status } = useContext(GameContext);
 
 	return (
 		<>
@@ -17,7 +17,7 @@ export default function GameStatusPanel() {
 						</div>
 						<div className="room-info">
 							{config.seconds / 60}+{config.increment} • Casual • {config.gameType} <br/>
-							STATE HERE!
+							{status.state}
 						</div>
 					</div>
 					<div className="bottom-row">

@@ -34,7 +34,7 @@ export default function Game() {
     }
   }, [])
 
-  if(!status || !config) {
+  if(!status || !config || !players) {
     return (<>Joining game... Please stand by</>)
   }
 
@@ -52,6 +52,7 @@ export default function Game() {
         <MoveHistoryPanel />
         <PlayerContainer reverse={false}/>
         <MoveInput />
+        <button>test</button>
       </div>
     </MainContainer>
     

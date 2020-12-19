@@ -5,11 +5,11 @@ const EventEmitter = require('events');
 class Game extends EventEmitter {
 	constructor(id, timeModel) {
 		super();
-		this.gameId = id;
-		this.game = null;
+    this.gameId = id;
+    this.game = new Chess();
 		this.player_white = null;
 		this.player_black = null;
-		this.gameState = GAME_STATE.CAN_JOIN;
+		this.gameState = GAME_STATE.GAME_CREATED;
 		this.currentTurn = null; 
 		this.turnColor = 'white';
 
@@ -22,17 +22,19 @@ class Game extends EventEmitter {
 	}
 
 	onNewPlayer(player) {
+    console.log("new player from gamemodel!");
 		if(this.player_white && this.player_black) return;
 		if(!this.player_white) {
 			this.player_white = player;
-			player.side = 'white';
+      player.side = 'white';
 			if(this.player_black) this.setupGame();
 		}
 		else {
 			player.side = 'black';
 			this.player_black = player;
 			this.setupGame();
-		} 
+    }
+    
 	}
 
 	onRemovePlayer(player) {
@@ -103,12 +105,13 @@ class Game extends EventEmitter {
 	setupGame() {
 		this.gameState = GAME_STATE.GAME_RUNNING;
 		this.game = new Chess();
-		this.currentTurn = this.player_white;
+    this.currentTurn = this.player_white;
+    console.log("GAME SETUP!!!");
 	}
 }
 
 const GAME_STATE = {
-	NOT_RUNNING: "NOT_RUNNING",
+	GAME_CREATED: "GAME_CREATED",
 	GAME_RUNNING: "GAME_RUNNING",
 	WHITE_WINNER: "WHITE_WINNER",
 	BLACK_WINNER: "BLACK_WINNER",

@@ -16,7 +16,7 @@ class GameServer {
 		this.server = http.createServer(this.app);
 		this.io = socketIo(this.server);
 		
-		this.eventManager = new EventManager();
+		this.eventManager = new EventManager(this.io);
 
 		this.port = process.env.PORT || 5000;
 

@@ -1,14 +1,17 @@
 const PlayerManager = require('./playerManager.js');
 const RoomManager = require('./roomManager.js');
+const MessageManager = require('./messageManager.js');
 
 const { messageLogger } = require('../utils/logger');
 const { SERVER_ROOM_ERROR, SERVER_ROOM_SUCCESS, SERVER_REQUEST_SUCCESS, SERVER_REQUEST_ERROR } = require('../../client/src/constants/events/server');
 const { CLIENT_CONNECTION, CLIENT_ROOM, CLIENT_GAME, CLIENT_REQUEST } = require('../../client/src/constants/events/client');
 
 class EventManager {
-	constructor() {
+	constructor(io) {
+    this.io = io;
 		this.playerManager = new PlayerManager();
-		this.roomManager = new RoomManager();
+    this.roomManager = new RoomManager();
+    this.messageManager = new MessageManager(this.io);
 	}
 
 	onConnection(socket) {
@@ -21,7 +24,7 @@ class EventManager {
 		this.playerManager.onDisconnect(socket);
 	}
 
-	onMessage(socket, data, io) {
+	async onMessage(socket, data, io) {
 		if(!data || !socket) return;
 		let socketPlayer = this.playerManager.findPlayerById(socket.id);
 		if(!socketPlayer) return;
@@ -33,9 +36,8 @@ class EventManager {
 
 			case CLIENT_ROOM.CREATE:
 				if(socketPlayer.roomId !== "") return; // leave room functionality
-				try{
-					this.roomManager.playerCreateRoomRequest(socketPlayer, socket, data.payload, io);
-					socket.emit('response', ({res: SERVER_ROOM_SUCCESS.CLIENT_CREATE_ROOM}))
+				try {
+          await this.roomManager.playerCreateRoomRequest(socketPlayer, socket, data.payload);
 				} catch (error) {
 					messageLogger("server", "error when creating a room!", "danger");
 					socket.emit('response', ({res: SERVER_ROOM_ERROR.CLIENT_CREATE_ROOM}));
@@ -46,11 +48,8 @@ class EventManager {
 				let targetRoomId = socketPlayer.roomId;	
 				if(targetRoomId === "") return;
 				try {
-					this.roomManager.playerRequestLeaveRoom(socketPlayer, socket);
-					io.in(targetRoomId).emit('response', ({
-						currentState: "PLAYER_LEFT", 
-						res: SERVER_ROOM_SUCCESS.CLIENT_LEFT_ROOM
-					}));
+          this.roomManager.playerRequestLeaveRoom(socketPlayer, socket);
+          this.messageManager.sendMessageToRoom(targetRoomId, "", SERVER_ROOM_SUCCESS.CLIENT_LEFT_ROOM)
 					console.log("player leaved room", socketPlayer);
 				} catch (error) {
 					console.log("error player leaving!");
@@ -86,40 +85,15 @@ class EventManager {
 
 			case CLIENT_REQUEST.ROOMS:
 				try {
-					let availableRooms = this.roomManager.getAvailableRooms();
-					socket.emit('response', ({
-						payload: availableRooms, 
-						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOMS}));
-					
+          let availableRooms = this.roomManager.getAvailableRooms();
+          this.messageManager.sendMessageToSocket(socket, 
+            availableRooms, SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOMS)
 				} catch (error) {
-					
+					console.error("cant receive rooms!");
 				}
 				break;
 
-			case CLIENT_REQUEST.ROOM_PLAYERS:
-				try {
-					let data = targetRoom.getGamePlayersAndState();
-					io.in(player.roomId).emit('response', ({
-						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM_PLAYERS,
-						payload: data
-					}));
-					messageLogger("server", "Client requested room players successfully", "success");
-				} catch(err) {
-					console.error("error request room players!");
-				}
-				break;
 			
-			case CLIENT_REQUEST.ROOM_CONFIG:
-				try {
-          let data = targetRoom.getGameConfig();
-          console.log(data);
-					socket.emit('response', ({
-						res: SERVER_REQUEST_SUCCESS.CLIENT_REQUEST_ROOM_CONFIG, 
-						payload: data}))
-				} catch (error) {
-					console.error("error when requesting config!", error);
-				}
-				break;
 
 			default:
 				return;
@@ -136,29 +110,46 @@ class EventManager {
 		}
 
 		switch(data.event) {
-			case CLIENT_GAME.MOVE_PIECE:
+      case CLIENT_GAME.MOVE_PIECE:
 				try {
           targetRoom.playerMakeMove(data.move, player);
-          let payload = targetRoom.getGameStatus();
-          console.log(payload);
-					io.in(player.roomId).emit('response', ({
-						payload: payload,
-						res: SERVER_ROOM_SUCCESS.CLIENT_MOVE_PIECE}))
-
+          let status = targetRoom.getGameStatus();
+          this.messageManager.sendMessageToRoom(player.roomId, status, "GAME_STATUS_OK");
 					messageLogger("EVENT", data.event, "SUCCESS");
-
 				} catch (error) {
 					socket.emit('response', ({data: error, res: SERVER_ROOM_ERROR.CLIENT_MOVE_PIECE}))
-					messageLogger("EVENT", `${data.event} move error!`, "WARNING")
+					messageLogger("EVENT", `${data.event} move error!, ${error}`, "WARNING")
+				}
+        break;
+
+        case CLIENT_REQUEST.ROOM_PLAYERS:
+				try {
+          let data = targetRoom.getPlayers();
+          this.messageManager.sendMessageToRoom(player.roomId, data, "RECEIVE_PLAYERS_OK", "players")
+					messageLogger("server", "Client requested room players successfully", "success");
+				} catch(err) {
+					console.error("error request room players!");
+				}
+				break;
+			
+			case CLIENT_REQUEST.ROOM_CONFIG:
+				try {
+          console.log(targetRoom, "targetRoom!");
+          let data = targetRoom.getGameConfig();
+          this.messageManager.sendMessageToRoom(player.roomId, data, "GAME_CONFIG_OK")
+				} catch (error) {
+					console.error("error when requesting config!", error);
 				}
         break;
         
-      case CLIENT_GAME.READY:
+      case "CLIENT_REQ_GAME_STATUS":
         try {
-          return;
-        } catch (error) {
-          return;
+          let data = targetRoom.getGameStatus();
+          this.messageManager.sendMessageToRoom(player.roomId, data, "GAME_STATUS_OK");
+        } catch {
+          console.error("cant send game config");
         }
+        break;
 				
 			default:
 				return;

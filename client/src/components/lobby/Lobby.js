@@ -15,14 +15,16 @@ export default function Lobby() {
 	const history = useHistory();
 	const [activeTab, setActiveTab] = useState('newgame');
 
-	function handleJoinGame(e, id) {
+	async function handleJoinGame(e, id) {
     e.preventDefault();
-    joinGame(id);
+    await joinGame(id);
 		history.push("/play");
 	}
 
   function requestGamesWithTimeOut(millSecs) {
     setTimeout(() => {
+
+      console.log("requesting games");
       getGames();
     }, millSecs);
   }

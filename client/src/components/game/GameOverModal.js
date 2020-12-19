@@ -1,10 +1,21 @@
 import React from 'react'
 
-export default function GameOverModal({display, onLeave}) {
+import { GameContext } from './context/GameProvider';
+
+export default function GameOverModal({onLeave}) {
+
+  const { status } = React.useContext(GameContext);
+  
+
+  if(!status.state !== "GAME_OVER"){
+    return (
+      <>
+      </>
+    )
+  }
+
   return (
     <>
-      {display ?
-      <>
         <div className="game-over-modal">
           <div className="content">
             <h2>Game over</h2>
@@ -12,7 +23,6 @@ export default function GameOverModal({display, onLeave}) {
             <button>Leave</button>
           </div>
         </div>
-      </> : null}
     </>
     
   )

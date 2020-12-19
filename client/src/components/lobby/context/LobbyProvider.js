@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import { useSocket } from '../../../context/socket/SocketProvider';
 import LobbyReducer from './LobbyReducer';
+import { useHistory } from 'react-router-dom';
 
 import * as e from '../../../constants/events/client';
 
@@ -15,6 +16,7 @@ export const LobbyContext = createContext(lobbyState);
 export const LobbyProvider = ({ children }) => {
   const [state, dispatch] = useReducer(LobbyReducer, lobbyState);
   const socket = useSocket();
+  const history = useHistory();
 
   useEffect(() => {
     if(!socket) return;
@@ -40,9 +42,9 @@ export const LobbyProvider = ({ children }) => {
 		socket.emit('request', ({event: e.CLIENT_REQUEST.ROOMS}))
   }
 
-  const joinGame = (id) => {
+  const joinGame = async (id) => {
     console.log("joining game!", id);
-    socket.emit("message", ({event: e.CLIENT_ROOM.JOIN, payload: id}))
+    await socket.emit("message", ({event: e.CLIENT_ROOM.JOIN, payload: id}))
     return;
   }
 
